@@ -95,35 +95,32 @@ checkWorkshop5 = quickCheckResult (\ (Positive x) -> (x < 10) --> numberPerm x =
 --
 -- 4
 -- 
---reversal :: Integer -> Integer
---reversal = read . reverse . show
---testp :: [Ord] => a -> [a]
-q4 = [x | x <- [1..10001], isPrime x && isPrime (reversal x)]
+-- Time: 20 min
 
-checkprime = [x | x <- [1..10001], isPrime x]
-checkprimerev = [x | x <- [1..10001], isPrime (reversal x)]
+-- find all the numbers who are prime and reversible prime
+findReversePrime = [x | x <- [1..10001], isPrime x && isPrime (reversal x)]
 
-check4 = quickCheck (q4 == intersect checkprime checkprimerev)
+checkPrim = [x | x <- [1..10001], isPrime x]
+checkPrimeRev = [x | x <- [1..10001], isPrime (reversal x)]
+
+check4 = quickCheck (findReversePrime == intersect checkPrim checkPrimeRev)
 
 --
 -- 5
 --
-q5 = take 5 primes
+-- time: 30 Minutes
+-- Biggest challenge was making the prime generation nice
+check5 = consecPrime (take 101 primes)
 
-primes2 :: [Integer] -> [Integer]
---primes2 (x:xs) = xs ++ filter prime[(last(xs)+1)..]
-primes2 xs = tail(xs) ++ filter prime[(last(xs)+1)..]
+incrPrimes :: [Integer] -> [Integer]
+incrPrimes xs = tail xs ++ filter prime[(last xs +1)..]
 
-testq5 ::[Integer] -> Integer
---testq5 xs = isPrime(sum xs)
---testq5 p (x:xs) = p x && myall p xs
-testq5 xs
+consecPrime ::[Integer] -> Integer
+consecPrime xs
   | isPrime(sum xs) = sum xs
   | otherwise = checkFurther
-  where checkFurther = testq5 (take 101 (primes2 xs))
+  where checkFurther = consecPrime (take 101 (incrPrimes xs))
 
--- hp
--- hoe wat waar ?
 
 --
 -- 6 WIP
@@ -131,11 +128,11 @@ testq5 xs
 -- ugly hardcoded Int , has to go
 -- wanted quickcheck solution, didnt find one...
 
-testq6 :: Int -> [Integer]
-testq6 n 
+assignment6 :: Int -> [Integer]
+assignment6 n 
   | not(isPrime((product(take n primes)) + 1)) =  take n primes
   | otherwise = checkFurther
-  where checkFurther = testq6 (n+1)
+  where checkFurther = assignment6 (n+1)
 
 --
 -- 7
