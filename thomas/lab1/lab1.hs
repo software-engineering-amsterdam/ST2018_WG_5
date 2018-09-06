@@ -1,6 +1,7 @@
 
 module Lab1 where
 import Data.List
+import Data.Char
 import Debug.Trace
 import Test.QuickCheck    
 
@@ -68,5 +69,79 @@ permLength x = product [1..(length x)]
 checkWorkshopFive = quickCheckResult (\ a -> length (permutations a) == permLength a)
 
 -- Lab 1.4
-generateReversablePrimes :: () -> [Int]
--- generateReversablePrimes = 
+reversablePrime :: Integer -> [Integer]
+reversablePrime x = [x | prime (reversal x)]
+
+filterReversablePrimes :: [Integer] -> [Integer] -> [Integer]
+filterReversablePrimes (x:xs) res = if x < 10000 
+                                    then filterReversablePrimes xs (res ++ (reversablePrime x))
+                                    else res
+
+generateReversablePrimes :: [Integer]
+generateReversablePrimes = filterReversablePrimes primes []
+
+-- Lab 1.5
+getSublistPrimes :: Int -> Integer
+getSublistPrimes n = sum (drop n (take (101+n) primes))
+
+findConsecPrime :: Int -> Integer
+findConsecPrime n = if prime x then x else findConsecPrime (n+1) where x = getSublistPrimes n
+
+findConsecutivePrime :: Integer
+findConsecutivePrime = findConsecPrime 1
+
+-- Lab 1.6
+getCounterExamples :: Int -> Int -> [Integer] -> [Integer]
+getCounterExamples 0 n res = res
+getCounterExamples num n res = if prime x 
+                               then getCounterExamples num (n+1) res 
+                               else getCounterExamples (num-1) (n+1) (res ++ [x])
+                               where x = (product (take n primes)) + 1
+
+findCounterExamples :: Int -> [Integer]
+findCounterExamples n = getCounterExamples n 0 []
+
+-- Lab 1.7
+doDouble :: Char -> Char
+doDouble num = if x >= 10 
+               then intToDigit (x-9) 
+               else intToDigit x where x = digitToInt num * 2
+
+decideDouble :: Int -> Char -> Char
+decideDouble n num = if mod n 2 == 0 
+                     then doDouble num 
+                     else num
+
+calculateSumDigits :: Int -> [Char] -> [Char] -> [Char]
+calculateSumDigits n [] res = res
+calculateSumDigits n (x:xs) res = calculateSumDigits (n+1) xs (res ++ [decideDouble n x])
+
+luhnMiddle :: [Char] -> [Int]
+luhnMiddle number = map digitToInt x where x = calculateSumDigits 1 (reverse number) []
+
+luhnAlgorithm :: [Char] -> Bool
+luhnAlgorithm number = mod (sum (luhnMiddle number) * 9) 10 == 0
+
+luhn :: Integer -> Bool
+luhn number = luhnAlgorithm (show number)
+
+masterCheckOne :: Integer -> Bool
+masterCheckOne number = x >= 2221 && x <= 2720 where x = div number 1000000000000
+
+masterCheckTwo :: Integer -> Bool
+masterCheckTwo number = x >= 51 && x <= 55 where x = div number 100000000000000
+                    
+isMaster :: Integer -> Bool
+isMaster number = luhn number && (masterCheckOne number || masterCheckTwo number)
+
+visaCheck :: Integer -> Bool
+visaCheck number = x == "4" where x = take 1 (show number)
+
+isVisa :: Integer -> Bool
+isVisa number = luhn number && visaCheck number
+
+aeCheck :: Integer -> Bool
+aeCheck number = x == "34" || x == "37" where x = take 2 (show number)
+
+isAmericanExpress :: Integer -> Bool
+isAmericanExpress number = luhn number && aeCheck number
