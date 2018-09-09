@@ -12,44 +12,68 @@ perms (x:xs) = concat (map (insrt x) (perms xs)) where
 sumOfNSquared :: Int -> Int
 sumOfNSquared n = sum [x * x | x <- [1..n]]
 
--- 2 hours
--- Assignment 1 part 1
+sumOfNToThePowerOf :: Int -> Int -> Int
+sumOfNToThePowerOf n power = sum [x^power | x <- [1..n]]
+
+{-------------------------------------------------------
+    Assignment 1 part 1
+    Hours spent: 2
+--------------------------------------------------------}
 assignment1first :: Int -> Int
 assignment1first n = div (n * (n + 1) * ((2 * n) + 1)) 6
 
 assignment1FirstTest = quickCheckResult (\ (Positive x) -> sumOfNSquared x == assignment1first x)
 
--- 0.5 hours
--- Assignment 1 part 2
-sumOfNToThePowerOf :: Int -> Int -> Int
-sumOfNToThePowerOf n power = sum [x^power | x <- [1..n]]
-
+{-------------------------------------------------------
+    Assignment 1 part 2
+    Hours spent: 0.5
+--------------------------------------------------------}
 assignment1second :: Int -> Int
 assignment1second n = (div (n * (n+1)) 2) ^ 2
 
 assignment1SecondTest = quickCheckResult (\ (Positive x) -> sumOfNToThePowerOf x 3 == assignment1second x)
 
--- 1 hour
--- Assignment 2
+{-------------------------------------------------------
+    Assignment 2
+    Hours spent: 1
+
+    Answers:
+    It is hard to test, since there is a very big increase in things to compute and thus the test runs
+    quite slow.
+
+    Checking if 2 to the power of x is the same as the cardinal of the power set of A is being tested.
+
+    Of course it is needed that the subsequences functions works as intended,
+    but that's is out of scope for this particular test and should be tested in a separate test
+--------------------------------------------------------}
 positivesList :: Int -> [Int]
 positivesList x = [1..x]
 assignment2Test = quickCheckResult (\ (Positive x) -> (2^x) == length (subsequences (positivesList x)) )
--- It is hard to test, since there is a very big increase in things to compute
 
--- Checking if 2 to the power of x is the same as cardinal of the power set of A
--- Of course it is needed that the subsequences functions works as intended
 
--- 0.5 hours
--- Assignment 3
+{-------------------------------------------------------
+    Assignment 3
+    Hours spent: 0.5
+
+    Answers:
+    It is hard to test, since there is a very big increase in things to compute and thus the test runs
+    quite slow.
+
+    Checking if the factorial of x is the same as the formula in the assignment is being tested
+
+    Of course it is needed that the perms functions works as intended,
+    but that's is out of scope for this particular test and should be tested in a separate test
+--------------------------------------------------------}
 factorial n = if n < 2 then 1 else n * factorial (n-1)
 assignment3Test = quickCheckResult (\ (Positive x) -> (factorial x) == length (perms (positivesList x)) )
--- It is hard to test, since there is a very big increase in things to compute
 
--- Checking if the factorial of x is the same as the formula in the assignment
--- Of course it is needed that the perms functions works as intended
+{-------------------------------------------------------
+    Assignment 4
+    Hours spent: 1
 
--- 1 hour
--- Assignment 4
+    Answers:
+    By checking random (or all) numbers on being a prime after reversing
+--------------------------------------------------------}
 reversal :: Int -> Int
 reversal  = read . reverse . show
 
@@ -71,25 +95,39 @@ primesSmallerThen n = takeWhile (\x -> x < n) primes
 
 assignment4Filter :: [Int]
 assignment4Filter = filter (\x -> prime (reversal x)) (primesSmallerThen 1000)
--- Q: How would you test this function, by the way?
--- A: probably by checking random (or all) numbers on being a prime after reversing
 
--- 0.75 hours
--- Assignment 5
--- total = 37447, range = (83 - 677)
+
+{-------------------------------------------------------
+    Assignment 5
+    Hours spent: 0.75
+
+    Answers:
+    The total is 37447 and covers the primes range of (83 - 677)
+--------------------------------------------------------}
 listOfhundredOnes :: [[Int]]
 listOfhundredOnes = [takePrimesFrom 101 x | x <- [1..]]
 assignment5 = sum (filter (\xs -> prime(sum xs)) listOfhundredOnes !! 1)
 
--- 1 hour
--- Assignment 6
--- Smallest counter example is 30031
+{-------------------------------------------------------
+    Assignment 6
+    Hours spent: 1
+
+    Answers:
+    The smalles counter example is 30031
+--------------------------------------------------------}
 takePrimes :: Int -> [Int]
 takePrimes x = take x primes
 assignment6 = (filter (\x -> not (prime(x))) [(product (takePrimes x) + 1) | x <- [1..]]) !! 0
 
--- 2 hours
--- Assignment 7
+{-------------------------------------------------------
+    Assignment 7
+    Hours spent: 2
+
+    Answers:
+    This is best testable by taking a set of valid and invalid numbers and run them
+    through the function and check if the output is correct. (see the test methods
+    below for example)
+--------------------------------------------------------}
 -- performs the double operation on a digit
 luhnDouble digit = if doubled > 9 then doubled - 9 else doubled
   where doubled = digit * 2
@@ -115,7 +153,7 @@ luhn :: Int -> Bool
 luhn card = ((sum ((map (\x -> luhnDouble x) secondDigits) ++ otherDigits)) + checkDigit) `mod` 10 == 0
     where
       secondDigits = everySecond (reverse digitsList) -- array of all second digits in the number
-      otherDigits = tail (getOtherDigits (reverse (digitsList))) -- array of all non second digits in the number
+      otherDigits = tail (getOtherDigits (reverse (digitsList))) -- array of all non second digits in the number excluding the check digit
       digitsList = digits card -- the digits of the card to check as array
       checkDigit = last digitsList -- the last check digit
 
@@ -137,18 +175,21 @@ isMaster card = (((take 4 digitsList) == [2,2,2,1]) ||
     digitsList = digits card
 
 isVisa :: Int -> Bool
-isVisa card = (digitsList !! 0) == 4 && (length digitsList) == 16 && luhn card
+isVisa card = (digitsList !! 0) == 4 &&
+              (length digitsList) == 16 &&
+              luhn card
   where
     digitsList = digits card
 
--- This is best testable by testing various valid/invalid numbers for each type of card
 testVisa = [(isVisa 4111111111111111), (isVisa 4012888888881881), not (isVisa 4111132111111111), not (isVisa 4012588888881881)]
 testMaster = [(isMaster 5555555555554444), (isMaster 5105105105105100), not (isMaster 5555555553554444), not (isMaster 5105125105105100)]
 testAmerican = [(isAmericanExpress 378282246310005), (isAmericanExpress 371449635398431), (isAmericanExpress 378734493671000),
                 not (isAmericanExpress 378282245310005), not (isAmericanExpress 371449235398431), not (isAmericanExpress 378734494671000)]
 
--- 1.5 hours
--- Assignment 8
+{-------------------------------------------------------
+    Assignment 8
+    Hours spent: 1.5
+--------------------------------------------------------}
 -- contains the different boys present in the story
 data Boy = Matthew | Peter | Jack | Arnold | Carl
            deriving (Eq,Show)
