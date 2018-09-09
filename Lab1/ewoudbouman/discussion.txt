@@ -1,0 +1,61 @@
+EX1
+
+note: gekeken naar
+Ewoud
+Michael
+Thomas
+1.1
+
+workshop 1:
+Geen voorkeur.
+Misschien dat mijn (Ewoud) slechte naam keuze heeft qua variable.
+
+workshop 3:
+Thomas heeft hem recursief gedaan. 
+Denk dat dat overkill is en een list expression zoals de rest
+heeft ook voldoende is.
+
+Mijn (Ewoud) variable keus is weer dubieus.
+
+1.2
+
+Ik vind die van michael het best.
+Hij heeft al duidelijk in zijn comments waarom het quickcheck
+gebeuren geen goed idee is.
+
+1.3
+ik vind mijn (Ewoud) het mooiste oplossing, die van thomas lijkt erop.
+Alleen is mijn quickcheck dodgy/hardcoded conditions.
+Michael heeft de beste comments.
+
+1.4
+
+Ik vind mijn (ewoud) oplossing het mooist.
+3 list expressions creeeren de getallen en ik check het dmv
+een intersection.
+Alleen heb ik hardcoded max waardoor quickcheck niet echt relevant is.
+
+volgens mij doet thomas dat gedeelte beter.
+
+1.5
+
+Weet niet hoe efficient de implementaties van Thomas en Michael zijn.
+generen jullie constant opnieuw alle priem getallen?
+
+Volgens mij is mijn (Ewoud) prime generator het meest efficient.
+
+1.6
+
+Michael heeft de mooiste, alles in 1 list expression.
+
+1.7
+
+Michael heeft beste testcase.
+Ben erg blij met mijn (Ewoud) luhn functie maar dat is meer
+showoff denk ik
+
+1.8
+
+Michael had volgens mij de oplossing voor de accusses gevonden.
+Ik (Ewoud) heb deze gecopyieerd.
+Vind mijn accusers en guilty, honest oplossing iets mooier.

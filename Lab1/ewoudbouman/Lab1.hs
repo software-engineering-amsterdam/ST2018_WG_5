@@ -3,6 +3,9 @@ module Lab1 where
 import Data.List
 import Test.QuickCheck
 
+{-------------------------------------------------------
+    Given code and modified functions
+--------------------------------------------------------}
 prime :: Integer -> Bool
 prime n = n > 1 && all (\ x -> rem n x /= 0) xs
   where xs = takeWhile (\ y -> y^2 <= n) primes
@@ -10,6 +13,7 @@ prime n = n > 1 && all (\ x -> rem n x /= 0) xs
 primes :: [Integer]
 primes = 2 : filter prime [3..] 
 
+-- Generate prime lists incrementally
 -- Note: assumes that Integer n is a prime
 primes' :: Integer -> [Integer]
 primes' n = n : filter prime [(n+1)..]
@@ -34,56 +38,60 @@ isPrime :: Integer -> Bool
 isPrime n = all (\ x -> rem n x /= 0) xs
   where xs = takeWhile (\ y -> y^2 <= n) [2..]
 
--- 
---
--- 1
---
---
--- Time: 45 min
--- Most of it was spend fighting with quickcheck
+{-------------------------------------------------------
+    Assignment 1 part 1
+    Time: 45 min
+    Most of it was spend fighting with quickcheck
+--------------------------------------------------------}
 
--- exercise 2 from the workshop
---
-
+-- 1^2 + 2^2 + .. + n^2
 lsidea :: Int -> Int
 lsidea n = sum [x ^ 2 | x <- [1..n]]
 
+-- n(n + 1)(2n +1) / 6
 rsidea :: Int -> Int
 rsidea n = div (n * (n + 1) * (2 * n + 1)) 6
 
 -- quickcheck
 checkWorkshop2 = quickCheck (\ (Positive x) -> lsidea x == rsidea x)
 
---
--- exercise 3 from the workshop
---
+{-------------------------------------------------------
+    Assignment 1 part 2
+--------------------------------------------------------}
 
+-- 1^3 + 2^3 + .. + n^3
 lsideb :: Int -> Int
 lsideb n = sum [x ^ 3 | x <- [1..n]]
 
+-- (n(n+1) / 2)^2
 rsideb :: Int -> Int
 rsideb n = div  (n * (n + 1)) 2 ^ 2
 
 checkWorkshop3 = quickCheck (\ (Positive x) -> lsideb x == rsideb x)
 
---
--- 2
---
--- Time: 20 min
--- WIP: missing quickstep verification
+{-------------------------------------------------------
+    Assignment 2
+    Time: 20 min
 
-setA :: [a] -> Int
-setA i = length (subsequences i)
+    Checking is slow because bigly numbers
+--------------------------------------------------------}
 
-subSets :: [a] -> Int
-subSets i = 2 ^ length i
+-- |A| = n
+setA :: Int -> Int
+setA i = length (subsequences [1..i])
 
---
--- 3
---
--- Time: 30 min
---
--- Note that the proof is dodgy because of the bigly numbers
+-- |>A| = 2^n
+subSets :: Int -> Int
+subSets i = 2 ^ i
+
+checkWorkshop4 = quickCheck (\ (Positive x) -> setA x == subSets x)
+
+{-------------------------------------------------------
+    Assignment 3
+    Time: 30 min
+
+    Note that the proof is dodgy because of the bigly numbers
+--------------------------------------------------------}
 
 numberPerm, numberObjects :: Int -> Int
 numberPerm n = length (permutations [1..n])
@@ -91,99 +99,101 @@ numberObjects n = product [1..n]
 
 checkWorkshop5 = quickCheckResult (\ (Positive x) -> (x < 10) --> numberPerm x == numberObjects x)
 
+{-------------------------------------------------------
+    Assignment 4
+    Time: 20 min
+--------------------------------------------------------}
 
---
--- 4
--- 
--- Time: 20 min
-
--- find all the numbers who are prime and reversible prime
+-- Generate the solution
 findReversePrime = [x | x <- [1..10001], isPrime x && isPrime (reversal x)]
 
+-- Generate the individual prime numbers
 checkPrim = [x | x <- [1..10001], isPrime x]
 checkPrimeRev = [x | x <- [1..10001], isPrime (reversal x)]
 
+-- Compare the solution with the individual results
 check4 = quickCheck (findReversePrime == intersect checkPrim checkPrimeRev)
 
---
--- 5
---
--- time: 30 Minutes
--- Biggest challenge was making the prime generation nice
+{-------------------------------------------------------
+    Assignment 5
+    time: 30 Minutes
+
+    Biggest challenge was making the prime generation nice
+--------------------------------------------------------}
 check5 = consecPrime (take 101 primes)
 
+-- Iterate through the prime lists incrementally
 incrPrimes :: [Integer] -> [Integer]
 incrPrimes xs = tail xs ++ filter prime[(last xs +1)..]
 
+-- Find the smallest result
 consecPrime ::[Integer] -> Integer
 consecPrime xs
   | isPrime(sum xs) = sum xs
   | otherwise = checkFurther
   where checkFurther = consecPrime (take 101 (incrPrimes xs))
 
+{-------------------------------------------------------
+    Assignment 6
+    time: 40 minutes
 
---
--- 6 WIP
----
--- ugly hardcoded Int , has to go
--- wanted quickcheck solution, didnt find one...
+    ugly hardcoded Int , has to go
+    wanted quickcheck solution, didnt find one...
+    Not sure how quickcheck can be used to find the smallest counterexample?
+    Perhaps with a fixed range starting from 1?
+--------------------------------------------------------}
 
+-- find counterexample, 
 assignment6 :: Int -> [Integer]
 assignment6 n 
   | not(isPrime((product(take n primes)) + 1)) =  take n primes
   | otherwise = checkFurther
   where checkFurther = assignment6 (n+1)
 
---
--- 7
---
+{-------------------------------------------------------
+    Assignment 7
+    time: 70 minutes
 
--- copy pasta digs (dig converter)
--- https://stackoverflow.com/questions/3963269/split-a-number-into-its-digits-with-haskell
---
--- Should be better (FIX?)
-
-digs :: Integral x => x -> [x]
---digs :: Int -> [Integer]
-digs 0 = []
-digs x = digs (x `div` 10) ++ [x `mod` 10]
+    source digg: https://stackoverflow.com/questions/3963269/split-a-number-into-its-digits-with-haskell
+    
+    Missing: creditcard testcases.
+--------------------------------------------------------}
 
 testacc = (79927398713)
 
+-- Parse integer into list 
+-- Ex: 123 -> [1,2,3]
+digs :: Integral x => x -> [x]
+digs 0 = []
+digs x = digs (x `div` 10) ++ [x `mod` 10]
 
---luhn :: [Integer] -> Integer--[Integer]
---luhn :: [Integer] -> Integer--[Integer]
 luhn :: [Integer] -> Bool
 luhn n
   | (last n) == (mod (9 * (sum (init[if x < 10 then x else (x-9) | x <- reverse(zipWith (*) (reverse (n)) (cycle [1,2]))]))) 10) = True
   | otherwise = False
 
+-- Unimplemented
 isAmericanExpress :: Integer -> Bool
-isAmericanExpress n = luhn(digs(n))
+isAmericanExpress n = False
 
 isMaster :: Integer -> Bool
 isMaster n = False
   
 isVisa :: Integer -> Bool
 isVisa n = False
---double2nd n = zipWith (*) n (cycle [1,2])
 
---
--- 8
---
--- Time: 60 min
--- Problem was understanding the problem correctly
+{-------------------------------------------------------
+    Assignment 8
+    time: 90 minutes
+
+    Problem was understanding the problem correctly
+--------------------------------------------------------}
 
 accuses :: Boy -> Boy -> Bool
--- case Matthew
 accuses Matthew x = (x /= Carl) && (x /= Matthew)
--- case Peter
 accuses Peter x = (x == Matthew) || (x == Jack)
--- case Jack
 accuses Jack x = not(accuses Matthew x) && not(accuses Peter x)
--- case Arnold
 accuses Arnold x = accuses Matthew x /= accuses Peter x
--- case Carl
 accuses Carl x = not (accuses Arnold x)
 
 accusers :: Boy -> [Boy]
