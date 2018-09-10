@@ -1,0 +1,36 @@
+These are my findings about the various variants turned in by my team mates.
+
+I've had a look at:
+Michael
+Dennis
+Thomas
+Ewoud
+
+Assignment 1:
+Not really sure which is best. I like the comments leading back to the math problem in Ewoud's solution.
+Although I like the naming in the others more.
+
+Assignment 2:
+I like Ewoud's solution best and I think my elaborate answer explaining the open questions is best.
+
+Assignment 3:
+I think Ewoud's solution is best together with my elaborate answer. Also naming of the factorial function to
+"factorial" might be more clear.
+
+Assignment 4:
+Thomas his solution is best I think. I agree with Ewoud's comment about not using quick check
+and I think my answer is the solution to "test" this.
+
+Assignment 5:
+I like my solution best in terms of readability and conciseness. I think we should add Dennis his comment about
+testing the solution and also include the real "answers" of the range and result.
+
+Assignment 6:
+I think mine is most concise but I'm not really sure which I like most.
+
+Assignment 7:
+Thomas his solution would be best here I believe. It's the easies on the eyes ;). We should however include
+my comments + test cases.
+
+Assignment 8:
+Ewoud's solution + some of my additional comments for clarity
