@@ -73,7 +73,10 @@ checkWorkshop3 = quickCheck (\ (Positive x) -> lsideb x == rsideb x)
     Assignment 2
     Time: 20 min
 
-    Checking is slow because bigly numbers
+    Checking is slow the set grows exponential.
+
+    Note that we only check for the length of the 2 lists.
+    We do not check if the lists contain the identical sequences.
 --------------------------------------------------------}
 
 -- |A| = n
@@ -84,13 +87,16 @@ setA i = length (subsequences [1..i])
 subSets :: Int -> Int
 subSets i = 2 ^ i
 
+
 checkWorkshop4 = quickCheck (\ (Positive x) -> setA x == subSets x)
 
 {-------------------------------------------------------
     Assignment 3
     Time: 30 min
 
-    Note that the proof is dodgy because of the bigly numbers
+    Difficult to test correctly because of exponential n growth.
+
+    Again we do not verify the contents of the lists, only the length.
 --------------------------------------------------------}
 
 numberPerm, numberObjects :: Int -> Int
@@ -102,6 +108,11 @@ checkWorkshop5 = quickCheckResult (\ (Positive x) -> (x < 10) --> numberPerm x =
 {-------------------------------------------------------
     Assignment 4
     Time: 20 min
+
+    I compare my results with the intersection of 2 prime x result,
+    the normal version and the reverse version.
+    I dont think that quickcheck can help because this assignment
+    does not contain random variables, the values are fixed.
 --------------------------------------------------------}
 
 -- Generate the solution
@@ -118,7 +129,7 @@ check4 = quickCheck (findReversePrime == intersect checkPrim checkPrimeRev)
     Assignment 5
     time: 30 Minutes
 
-    Biggest challenge was making the prime generation nice
+    Biggest challenge was making the prime generation nice.
 --------------------------------------------------------}
 check5 = consecPrime (take 101 primes)
 
@@ -159,7 +170,7 @@ assignment6 n
     Missing: creditcard testcases.
 --------------------------------------------------------}
 
-testacc = (79927398713)
+testacc = 79927398713
 
 -- Parse integer into list 
 -- Ex: 123 -> [1,2,3]
@@ -169,9 +180,12 @@ digs x = digs (x `div` 10) ++ [x `mod` 10]
 
 luhn :: [Integer] -> Bool
 luhn n
-  | (last n) == (mod (9 * (sum (init[if x < 10 then x else (x-9) | x <- reverse(zipWith (*) (reverse (n)) (cycle [1,2]))]))) 10) = True
+  | last n == mod (9 * (sum (init[if x < 10 then x else (x-9) | 
+    x <- reverse(zipWith (*) (reverse n) (cycle [1,2]))]))) 10 = True
   | otherwise = False
 
+
+assignment7 = luhn(digs(testacc))
 -- Unimplemented
 isAmericanExpress :: Integer -> Bool
 isAmericanExpress n = False
@@ -199,6 +213,7 @@ accuses Carl x = not (accuses Arnold x)
 accusers :: Boy -> [Boy]
 accusers x = [n | n <- boys, accuses n x]
 
+-- 3 boys are telling the truth, they are accusing the guilty boy.
 guilty, honest :: [Boy]
 guilty = [n | n <- boys, length (accusers n) == 3]
 honest = accusers (head guilty)
