@@ -1,0 +1,33 @@
+1.1
+All solutions are good, but I like Ewoud's comments the best while his naming could be better.
+
+1.2
+Ewoud's solution is best, because I like the split in multiple functions better.
+
+1.3
+Ewoud's solution is the best.
+
+1.4
+I like Thomas' (my) solution the best.
+
+1.5
+Michael's solution is the easiest to read.
+
+1.6
+Michael's solution is the best, because it is a list comprehension.
+
+1.7
+Thomas' (My) solution is slightly easier to read.
+
+1.8
+Ewoud's functions are nicer.
+
+Votes:
+1.1 Ewoud
+1.2 Ewoud
+1.3 Ewoud
+1.4 Thomas
+1.5 Michael
+1.6 Michael
+1.7 Thomas
+1.8 Ewoud
