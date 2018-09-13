@@ -2,7 +2,6 @@ import Test.QuickCheck
 import Data.List
 import Data.Char
 import Debug.Trace
-import Test.QuickCheck
 
 prime :: Int -> Bool
 prime n = n > 1 && all (\ x -> rem n x /= 0) xs
