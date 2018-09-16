@@ -23,22 +23,14 @@ probs n = do
 data Shape = NoTriangle | Equilateral 
            | Isosceles  | Rectangular | Other deriving (Eq,Show)
 
-
-{-|
-    Assignment x
-    Time: x min
-
-
--}
-
 {-|
     Assignment 1
     Time: 90 min
 
-    STATE: Done, but perhaps better print because this is uglyyyyyyy
+    STATE: Done, but perhaps a better print solution is possible for the answer.
 -}
 
--- use ghetto numpy digitize to "bin" values into range!
+-- Digitize values to a bin range
 binValue :: Float -> Int
 binValue x 
     | x > 0 && x < 0.25 = 1
@@ -48,23 +40,15 @@ binValue x
     | otherwise = 0
 
 -- Chi square test
--- Zie dobbelsteen voorbeeld wikipedia
--- https://nl.wikipedia.org/wiki/Chi-kwadraattoets
-
+-- See dice example for understanding: https://nl.wikipedia.org/wiki/Chi-kwadraattoets
 chiSquare :: Int -> [Int] -> Float
 chiSquare n xs = fromIntegral (sum [(x - n)^2 | x <- xs]) / (fromIntegral (length xs) / fromIntegral (length(nub xs)))
 
--- Source;
--- https://codereview.stackexchange.com/questions/139587/coufromIntegral 
+-- Count occurences of each value.
+-- Source: https://codereview.stackexchange.com/questions/139587/coufromIntegral 
 numTimesFound :: Ord a => a -> [a] -> Int
 numTimesFound _ [] = 0
 numTimesFound x list = sum $ map (\a -> 1) $ filter (== x) list
-
--- Null hypothesis = random generator is random!
--- p value = 0.05, DF = 3, x^2 = 7.815
--- pValue = 0.05
-chiDistr = 7.815
-doAssign1 = assignment1 10000
 
 assignment1 :: Int -> IO Float--IO [Integer]
 assignment1 x = do
@@ -74,12 +58,14 @@ assignment1 x = do
     let binned = [binValue x | x <- (genlist)]
     let bincount = [numTimesFound x binned | x <- [1..4]]
     let pvar = chiSquare x bincount
-    -- UGLY, do it better...
-    if chiDistr > pvar
+    -- check null hypothesis: random generator is random!
+    -- p value = 0.05, DF = 3, x^2 = 7.815
+    if 7.815 > pvar 
         then putStrLn ("not random") 
         else putStrLn ("random!") 
     return pvar
 
+doAssign1 = assignment1 10000
 
 {-|
     Assignment 2 
@@ -87,6 +73,9 @@ assignment1 x = do
     Time: 90 min
 
     Status: Done? Missing is the quickcheck for other cases
+
+    Quickcheck defines the triangle solution space and tests our implementation by
+    generating random triangles.
 -}
 
 triangle :: Integer -> Integer -> Integer -> Shape
@@ -102,20 +91,16 @@ triangle a b c
     -- Other
     | otherwise = Other
 
-
-testx :: Integer -> Integer -> Integer
-testx a b = floor(sqrt(fromIntegral (a^2 + b^2)))
--- gen triangles
--- 5 types?
+-- Generate triangle testcases
 assignment2 :: IO Bool--IO [Integer]
 assignment2 = do
-    -- No triangle!
+    -- Not a triangle!
     quickCheckResult (\ (Positive a) (Positive b) (Positive c) -> triangle a b (a + b + c) == NoTriangle)
     -- Equilateral, same length
     quickCheckResult (\ (Positive a) -> triangle a a a == Equilateral)
     -- Rectangular (90°), using Euclid's formula
     quickCheckResult (\ (Positive m) (Positive n) -> (m > n) --> triangle (m ^ 2 - n ^ 2)(2 * m * n)(m ^ 2 + n ^ 2) == Rectangular)
-    -- isocles, check if triangle and generate non equilateral cases
+    -- isocles, check if it is a triangle and generate non equilateral cases
     quickCheckResult (\ (Positive m) (Positive n) -> (n <= m + m && m /= n) --> triangle m m n == Isosceles)
     -- Other ( i dont know what to do about this...)
     return True
@@ -132,18 +117,19 @@ stronger, weaker :: [a] -> (a -> Bool) -> (a -> Bool) -> Bool
 stronger xs p q = all (\ x -> p x --> q x) xs
 weaker   xs p q = stronger xs q p
 
--- properties workshopa 3a
-test1, test2, test3, test4 :: Int -> Bool
-test1 x = even x && x > 3
-test2 x = even x || x > 3
-test3 x = (even x && x > 3) || even x
-test4 x = (even x && x > 3) || even x
+-- properties from workshopa 3a
+prop1, prop2, prop3, prop4 :: Int -> Bool
+prop1 x = even x && x > 3
+prop2 x = even x || x > 3
+prop3 x = (even x && x > 3) || even x
+prop4 x = (even x && x > 3) || even x
 
-prop1, prop2, prop3, prop4 :: Bool
-prop1 = stronger [(-10)..10] test1 even
-prop2 = stronger [(-10)..10] test2 even
-prop3 = stronger [(-10)..10] test3 even
-prop4 = stronger [(-10)..10] even test4
+-- Domain we check the properties in.
+checkprop1, checkprop2, checkprop3, checkprop4 :: Bool
+checkprop1 = stronger [(-10)..10] prop1 even
+checkprop2 = stronger [(-10)..10] prop2 even
+checkprop3 = stronger [(-10)..10] prop3 even
+checkprop4 = stronger [(-10)..10] even prop4
 
 {-|
     Assignment 4 
@@ -152,6 +138,8 @@ prop4 = stronger [(-10)..10] even test4
         
     Status: Functional
     Todo: make quickechk pretty (spaghetti logic atm)
+    perhaps restructure in a set of requirements, but they seem stupid to me.
+    Dont seem much value in basic tests like length etc.
 -}
 
 -- remove single element from list
@@ -184,11 +172,44 @@ assignment4 = quickCheck propIsPermutation
 {-|
     Assignment 5 
     Recognizing and generating derangements
-    Time: 
+    Time: 90 minutes
+
+    State: Done?
+    But need to generate better number lists with quickcheck
+    Currently 2 issues.
+    - Very long number ranges generated by quickcheck?
+    - quickechk generates repeating numbers [1,1,1] or [4,4,4]. This should not happen!
 -}
 
+-- Derangement according to wikipedia:
+-- A derangement is a permutation that is NOT mapped to itself.
+propDLength, propDPermutation, propDCommunative:: [Integer] -> [Integer] -> Bool
+-- This means that: 
+-- A and B == equal length
+propDLength xs ys = isDerangement xs ys --> length xs == length ys
+-- B = A with B with is F(A) permutation
+propDPermutation xs ys = isDerangement xs ys --> isPermutation xs ys
+-- B = A then A = B with F(X) derangement (commutative operations)
+propDCommunative xs ys = isDerangement xs ys --> isDerangement ys xs
+--propDLength xs ys = isDerangement xs ys
+-- 
+-- 
 isDerangement :: Eq a => [a] -> [a] -> Bool
-isDenormalized xs ys = False
+--  The empty set can be considered a derangement of itself.
+isDerangement [] [] = True
+isDerangement xs ys
+    -- check if equal length
+    | length xs /= length ys = False
+    -- check if each individual element maps to eachother.
+    | or (zipWith (==) xs ys) = False
+    | otherwise = True
+
+assignment5 :: IO Result--IO [Integer]
+assignment5 = do
+    quickCheckResult propDLength
+    quickCheckResult propDPermutation
+    quickCheckResult propDCommunative
+
 {-|
     Assignment 6
     Implementing and testing ROT13 encoding
@@ -211,9 +232,9 @@ rot13 :: String -> String
 rot13 s = cipher s 13
 
 -- cases
--- 1) ROT13 is its own inverse; that is, to undo ROT13
+-- ROT13 is its own inverse; that is, to undo ROT13
 -- 1) rot13 (rot13 xs) = xs
--- 2) ???
+-- 2) profit???
 propRot13 :: String -> Bool
 propRot13 xs = xs == rot13 (rot13 xs)
 
@@ -225,3 +246,30 @@ assignment6 = quickCheck propRot13
     Implementing and testing IBAN validation
     Time: 60 min
 -}
+
+ibantest = "GB82WEST12345698765432"
+-- Check that the total IBAN length is correct as per the country. If not, the IBAN is invalid
+-- Move the four initial characters to the end of the string
+
+-- convert [Int] to int
+-- source https://stackoverflow.com/questions/1918486/convert-list-of-integers-into-one-int-like-concat-in-haskell
+fromDigits = foldl addDigit 0
+   where addDigit num d = 10*num + d
+
+validateIban :: String -> Bool
+validateIban xs = fromDigits (digitizeLetters (drop 4 xs ++ (take 4 xs))) `mod` 97 == 1
+
+grr :: String -> Int
+grr xs = fromDigits (digitizeLetters (drop 4 xs ++ (take 4 xs))) `mod` 97
+
+-- Replace each letter in the string with two digits, thereby expanding the string, where A = 10, B = 11, ..., Z = 35
+digitizeLetters :: String -> [Int]
+digitizeLetters [] = []
+digitizeLetters (x:xs)
+    | isLetter x = ord (toLower x) - 87 : digitizeLetters xs
+    | otherwise  = digitToInt x : digitizeLetters xs 
+
+-- Interpret the string as a decimal integer and compute the remainder of that number on division by 97
+
+iban :: String -> Bool
+iban xs = False --validateIban xs
