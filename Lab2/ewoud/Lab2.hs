@@ -7,6 +7,7 @@ import System.Random
 import Test.QuickCheck
 import Data.Function
 import System.Random
+import Data.Maybe
 
 infix 1 --> 
 
@@ -117,6 +118,8 @@ stronger, weaker :: [a] -> (a -> Bool) -> (a -> Bool) -> Bool
 stronger xs p q = all (\ x -> p x --> q x) xs
 weaker   xs p q = stronger xs q p
 
+-- Q 3a
+
 -- properties from workshopa 3a
 prop1, prop2, prop3, prop4 :: Int -> Bool
 prop1 x = even x && x > 3
@@ -131,6 +134,8 @@ checkprop2 = stronger [(-10)..10] prop2 even
 checkprop3 = stronger [(-10)..10] prop3 even
 checkprop4 = stronger [(-10)..10] even prop4
 
+-- Q 3b
+
 {-|
     Assignment 4 
     Recognizing Permutations
@@ -139,7 +144,7 @@ checkprop4 = stronger [(-10)..10] even prop4
     Status: Functional
     Todo: make quickechk pretty (spaghetti logic atm)
     perhaps restructure in a set of requirements, but they seem stupid to me.
-    Dont seem much value in basic tests like length etc.
+    Dont see much value in basic tests like length etc.
 -}
 
 -- remove single element from list
@@ -149,19 +154,15 @@ popOccurence x (y:ys)
     | x == y = ys
     | otherwise = y : popOccurence x ys
 
-
 -- check if permutation
 isPermutation :: Eq a => [a] -> [a] -> Bool
 isPermutation [] [] = True
 isPermutation [] (y:ys) = False
 isPermutation (x:xs) ys = elem x ys && isPermutation xs (popOccurence x ys)
 
---
--- TODO MAKE pretty
--- Works but ugly!
--- i check the length of the intersection of 2 unique lists 
+-- Check the length of the intersection of 2 unique lists 
 -- with both individual lists. 
--- If they are equal we have a a permutation because we may assume that there are no duplicates in the list
+-- If they are equal we have a permutation because we may assume that there are no duplicates in the list
 -- and thus have a 1:1 image domain.
 propIsPermutation :: [Integer] -> [Integer] -> Bool
 propIsPermutation xs ys = isPermutation (nub xs) (nub ys) == bijective
@@ -191,9 +192,8 @@ propDLength xs ys = isDerangement xs ys --> length xs == length ys
 propDPermutation xs ys = isDerangement xs ys --> isPermutation xs ys
 -- B = A then A = B with F(X) derangement (commutative operations)
 propDCommunative xs ys = isDerangement xs ys --> isDerangement ys xs
---propDLength xs ys = isDerangement xs ys
--- 
--- 
+-- propDLength xs ys = isDerangement xs ys ?
+
 isDerangement :: Eq a => [a] -> [a] -> Bool
 --  The empty set can be considered a derangement of itself.
 isDerangement [] [] = True
@@ -204,7 +204,7 @@ isDerangement xs ys
     | or (zipWith (==) xs ys) = False
     | otherwise = True
 
-assignment5 :: IO Result--IO [Integer]
+assignment5 :: IO Result
 assignment5 = do
     quickCheckResult propDLength
     quickCheckResult propDPermutation
@@ -222,7 +222,6 @@ assignment5 = do
 cipher :: String -> Int -> String
 cipher [] shift = []
 cipher (x:xs) shift
-    -- is this readable?
     -- Trick is to cast alphabetic chars to corresponding ints and back
     | x `elem` ['A'..'Z'] = chr (((ord x - ord 'A' + shift) `mod` 26) + ord 'A') : cipher xs shift
     | x `elem` ['a'..'z'] = chr (((ord x - ord 'a' + shift) `mod` 26) + ord 'a') : cipher xs shift
@@ -244,32 +243,44 @@ assignment6 = quickCheck propRot13
 {-|
     Assignment 7
     Implementing and testing IBAN validation
-    Time: 60 min
+    Time: 120 min
 -}
 
-ibantest = "GB82WEST12345698765432"
--- Check that the total IBAN length is correct as per the country. If not, the IBAN is invalid
--- Move the four initial characters to the end of the string
+countryFormat = [("BE", 16), ("FR", 27), ("DE", 22), ("GR", 27)]
+
+-- Iban testcases from wikipedia
+ibanCorrect, ibanFalse :: [String]
+ibanCorrect = ["BE71096123456769","FR7630006000011234567890189","DE91100000000123456789","GR9608100010000001234567890"]
+-- did everything +1, lazy!
+ibanFalse = ["BE71096123456770","FR7630006000011234567890190","DE91100000000123456790","GR9608100010000001234567891"]
 
 -- convert [Int] to int
 -- source https://stackoverflow.com/questions/1918486/convert-list-of-integers-into-one-int-like-concat-in-haskell
-fromDigits = foldl addDigit 0
-   where addDigit num d = 10*num + d
+flattenNumbers :: [Int] -> Integer
+flattenNumbers = read . concatMap show
 
-validateIban :: String -> Bool
-validateIban xs = fromDigits (digitizeLetters (drop 4 xs ++ (take 4 xs))) `mod` 97 == 1
-
-grr :: String -> Int
-grr xs = fromDigits (digitizeLetters (drop 4 xs ++ (take 4 xs))) `mod` 97
-
--- Replace each letter in the string with two digits, thereby expanding the string, where A = 10, B = 11, ..., Z = 35
+-- Replace each letter in the string with two digits, 
+-- thereby expanding the string, where A = 10, B = 11, ..., Z = 35
 digitizeLetters :: String -> [Int]
 digitizeLetters [] = []
 digitizeLetters (x:xs)
     | isLetter x = ord (toLower x) - 87 : digitizeLetters xs
     | otherwise  = digitToInt x : digitizeLetters xs 
 
--- Interpret the string as a decimal integer and compute the remainder of that number on division by 97
+-- Check if iban is valid number
+validateIban :: String -> Bool
+validateIban xs = (flattenNumbers (digitizeLetters (drop 4 xs ++ (take 4 xs))) `mod` 97 == 1)
 
+-- Check if the length of the iban correspondends with the country formatting
+validateCountry :: String -> Bool
+validateCountry xs = length xs == fromMaybe 0 (lookup (take 2 xs) countryFormat) 
+
+-- Check if input is valid Iban
 iban :: String -> Bool
-iban xs = False --validateIban xs
+iban xs = validateIban xs && validateCountry xs
+
+-- Pathetic quickcheck attempt.
+assignment7 :: IO Result
+assignment7 = do
+    quickCheckResult (all (==True) (map iban ibanCorrect))
+    quickCheckResult (all (==False) (map iban ibanFalse))
