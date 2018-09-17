@@ -52,9 +52,8 @@ testProbs n = do
   Assignment 2
   Recognizing triangles
 
-  Hours spent: TODO
+  Hours spent: 0.5
   Answers:
-  - TODO
 
 ------------------------------------------------------------------------------}
 data Shape = NoTriangle | Equilateral
@@ -63,10 +62,13 @@ data Shape = NoTriangle | Equilateral
 equilateral :: Integer -> Integer -> Integer -> Bool
 equilateral a b c = a == b && b == c
 
-
-
 triangle :: Integer -> Integer -> Integer -> Shape
-triangle a b c = NoTriangle
+triangle a b c
+    | (a + b < c) || (a + c < b) || (b + c < a) = NoTriangle
+    | a == b && b == c = Equilateral
+    | (a^2 + b ^2 == c^2) || (a^2 + c^2 == b^2) || (c^2 + b^2 == a^2)  = Rectangular
+    | a == b || b == c || a == c = Isosceles
+    | otherwise = Other
 
 {------------------------------------------------------------------------------
 
@@ -78,10 +80,21 @@ triangle a b c = NoTriangle
   - TODO
 
 ------------------------------------------------------------------------------}
---stronger, weaker :: [a] -> (a -> Bool) -> (a -> Bool) -> Bool
---stronger xs p q = forall xs (\ x -> p x --> q x)
---weaker   xs p q = stronger xs q p
--- TODO
+stronger, weaker :: [a] -> (a -> Bool) -> (a -> Bool) -> Bool
+stronger xs p q = all (\ x -> p x --> q x) xs
+weaker   xs p q = stronger xs q p
+
+p1 :: Int -> Bool
+p1 x = even x && x > 3
+
+p2 :: Int -> Bool
+p2 x = even x || x > 3
+
+p3and4 :: Int -> Bool
+p3and4 x = (even x && x > 3) || even x
+
+--getDescendingPropertyList ::
+
 
 {------------------------------------------------------------------------------
 
@@ -90,10 +103,39 @@ triangle a b c = NoTriangle
 
   Hours spent: TODO
   Answers:
-  - TODO
+Not containing duplicates in the test lists, we can define the following test sets, such as:
+:q
+[] []
+[1] []
+[] [1]
+[1..10] [1..10]
+[1..4] (take 1 (permutations [1..4]))!!0
 
+*Lab2> stronger (zip (permutations [1..4]) (permutations [1..4])) isSameLength containsSameElements
+True
+*Lab2> stronger (zip (permutations [1..4]) (permutations [1..4])) containsSameElements isSameLength
+True
+*Lab2>  stronger (zip (permutations [1..4]) (permutations [1..8])) containsSameElements isSameLength
+False
+*Lab2>  stronger (zip (permutations [1..4]) (permutations [1..8])) isSameLength containsSameElements
+True
+*Lab2>  stronger (zip (permutations [1..4]) (permutations [5..8])) containsSameElements isSameLength
+True
+*Lab2>  stronger (zip (permutations [1..4]) (permutations [5..8])) isSameLength containsSameElements
+False
+
+With different domains of input the 2 properties have different results. This states that the 2 properties have (partially) disjoint sets of input to which they apply,
+because of this, the properties have no ordering, as they are equal.
 ------------------------------------------------------------------------------}
--- TODO
+
+isPermutation :: Eq a => ([a],[a]) -> Bool
+isPermutation (xs,ys) = if length xs == length ys then all (\x -> x `elem` ys) xs else False
+
+isSameLength :: Eq a => ([a],[a]) -> Bool
+isSameLength (xs,ys) = length xs == length ys
+
+containsSameElements :: Eq a => ([a],[a]) -> Bool
+containsSameElements (xs,ys) = all (\x -> x `elem` ys) xs
 
 {------------------------------------------------------------------------------
 
@@ -102,22 +144,51 @@ triangle a b c = NoTriangle
 
   Hours spent: TODO
   Answers:
-  - TODO
+
+  Properties for deran:
+  x[i] != y[i]
+  length x == length y
+
+  Integer test lists for deran:
+  []
+  [1,2,3]
+  [1,2,3,4,5]
+  [1,2,3,4,5,6]
+
 
 ------------------------------------------------------------------------------}
--- TODO
+isDerangement :: Eq a => [a] -> [a] -> Bool
+isDerangement [] [] = True
+isDerangement (x:xs) (y:ys) = if x == y then False else isDerangement xs ys
+
+deran :: [a] -> [a] -> [a]
+deran [] res = res
+deran [x] res = [x]++res
+deran (x:y:xs) res = deran xs (res++[y,x])
+
+
 
 {------------------------------------------------------------------------------
 
   Assignment 6
   Implementing and testing ROT13 encoding
 
-  Hours spent: TODO
+  Hours spent: 0.5
   Answers:
-  - TODO
+--
 
 ------------------------------------------------------------------------------}
--- TODO
+
+charRot13 :: Char -> Char
+charRot13 c | ord c < ord 'a' || ord c > ord 'z' = error "Not a lowercase char!"
+            | ord c <= ord 'm' = chr (ord c + 13)
+            | otherwise = chr (ord 'a' + (13 - (ord 'z' + 1  - ord c)))
+
+rot13 :: [Char] -> [Char]
+rot13 xs = map (charRot13) xs
+
+prop_checkRot13 xs = xs == rot13 (rot13 xs)
+  where types xs = xs::[Char]
 
 {------------------------------------------------------------------------------
 
@@ -129,12 +200,22 @@ triangle a b c = NoTriangle
   - TODO
 
 ------------------------------------------------------------------------------}
--- TODO
 
+isCapitalLetter :: Char -> Bool
+isCapitalLetter x = ord x >= ord 'A' && ord x <= ord 'Z'
 
+moveCharactersToEnd :: String -> Int -> String
+moveCharactersToEnd xs x = snd res ++ fst res where res = splitAt x xs
 
+capitalLetterToDigit :: Char -> [Char]
+capitalLetterToDigit x | isCapitalLetter x == False = error "Not a capital letter!"
+                       | otherwise            = show (ord x - 55)
 
+replaceLettersByDigits :: String -> String
+replaceLettersByDigits xs = concat (map (\x -> if isCapitalLetter x then capitalLetterToDigit x else [x]) xs)
 
+iban :: String -> Bool
+iban xs = mod (read(replaceLettersByDigits (moveCharactersToEnd xs 4))) 97 == 1
 
 
 --
