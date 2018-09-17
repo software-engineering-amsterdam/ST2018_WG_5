@@ -84,14 +84,14 @@ triangle a b c
     | a == b || b == c || a == c = Isosceles
     | otherwise = Other
 
-tests = [
+assignment2 = [
   all (\x -> x == NoTriangle) [triangle 2 2 4, triangle 2 3 99, triangle 12 45 2],
   all (\x -> x == Equilateral)  [triangle 1 1 1, triangle 4 4 4],
   all (\x -> x == Rectangular)  [triangle 3 4 5, triangle 5 12 13, triangle 7 24 25],
   all (\x -> x == Isosceles)  [triangle 5 5 8, triangle 5 5 6],
   all (\x -> x == Other)  [triangle 2 3 4, triangle 4 5 6]
   ]
-  -- TODO add output
+  -- [True,True,True,True,True]
 
 
 {------------------------------------------------------------------------------
@@ -120,7 +120,7 @@ sortProp (x, _) (y, _)
   | stronger [(-10)..10] y x = GT
   | weaker [(-10)..10] y x = LT
 ass3Sorted = map (\x -> snd x) (sortBy sortProp ass3All)
--- TODO add output
+-- "acdb"
 
 {------------------------------------------------------------------------------
 
@@ -129,16 +129,10 @@ ass3Sorted = map (\x -> snd x) (sortBy sortProp ass3All)
 
   Hours spent: 2h
   Answers:
-  - The 2 properties to which a permutation must hold is: same length and check if everySecond
-    element is contained in the other
+  - The 2 properties to which a permutation must hold is: same length and a check
+    if every element is contained in the other
     - These 2 are equally strong
-      Output:
-      *Lab2> stronger ass4Tests isSameLength containsAll
-              False
-      *Lab2> stronger ass4Tests containsAll isSameLength
-              False
   - The correct domain of test cases must also include exceptions for both properties
-
 
 ------------------------------------------------------------------------------}
 isPermutation :: Eq a => ([a],[a]) -> Bool
@@ -154,11 +148,12 @@ containsAll ((x:xs),ys) = elem x ys && containsAll (xs,ys)
 ass4Valids  = [([1,2,3], [3,2,1])]
 ass4Invalids = [([1,2,3], [3,2,1,4]), ([1,2,3], [1,1,3])]
 
-ass4 = (map (\x -> isPermutation x) ass4Valids) ++ (map (\x -> not (isPermutation x)) ass4Invalids)
--- TODO add output
+ass4BasicTest = (map (\x -> isPermutation x) ass4Valids) ++ (map (\x -> not (isPermutation x)) ass4Invalids)
+-- [True,True,True]
 ass4Test :: [Int] -> Bool
 ass4Test list = all (\x -> x) (map (\x -> isPermutation (x, list)) (permutations list))
--- TODO add output
+-- quickCheck ass4Test
+-- (15 tests).... and running (slow because of big lists being generated)
 
 {------------------------------------------------------------------------------
 
@@ -168,15 +163,13 @@ ass4Test list = all (\x -> x) (map (\x -> isPermutation (x, list)) (permutations
   Hours spent: 1h
   Answers:
   - So derangement is the same as a permutation with the additional property:
-    Nothing can be on the same position as the original
+    "Nothing can be on the same position as the original"
   - The new "notOnSamePositions" is just as strong as the "isPermutation" property
     - Output:
     *Lab2> stronger ass5Tests notOnSamePositions isPermutation
           False
     *Lab2> stronger ass5Tests isPermutation notOnSamePositions
           False
-    *Lab2>
-  -
 
 ------------------------------------------------------------------------------}
 deran :: Int -> [[Int]]
@@ -197,11 +190,12 @@ notOnSamePositions (xs, ys) = all (\x -> x) [(xs !! x) /= (ys !! x) | x <- [0..(
 ass5Valids  = [([2,1,3], [3,2,1])]
 ass5Invalids  = [([1,2,3], [3,1,2,4]), ([1,2,3], [3,1,1]), ([1,2,3], [3,1,9]), ([1,2,3], [3,2,1])]
 
-ass5 = (map (\x -> isDerangement x) ass5Valids) ++ (map (\x -> not (isDerangement x)) ass5Invalids)
--- TODO add output
+ass5BasicTest = (map (\x -> isDerangement x) ass5Valids) ++ (map (\x -> not (isDerangement x)) ass5Invalids)
+-- [True,True,True,True,True]
 ass5Test :: [Int] -> Bool
 ass5Test list = all (\x -> x) (map (\x -> isDerangement (x, list)) (deranFromList list))
--- TODO add output
+-- quickCheck ass4Test
+-- (13 tests).... and running (slow because of big lists being generated)
 
 {------------------------------------------------------------------------------
 
@@ -231,7 +225,6 @@ propRot13 :: [Char] -> Bool
 propRot13 text =  text == rot13 (rot13 text)
 
 assignment6 = quickCheck propRot13
--- *Lab2> assignment6
 -- +++ OK, passed 100 tests.
 
 {------------------------------------------------------------------------------
@@ -248,13 +241,13 @@ assignment6 = quickCheck propRot13
     by creating a function that generates valid/invalid ibans and testing if the written
     method reports correctly on those. Altough then you should also test this method which creates
     IBANs, so it's a vicious circle.
+    
 ------------------------------------------------------------------------------}
 iban :: String -> Bool
 iban x = (isDutchIban x) && (ibanCheck x)
 
 ibanCheck :: String -> Bool
 ibanCheck iban = ((read (ibanToDigits (reformatIban iban)) :: Integer) `mod` 97)  == 1
-
 
 -- First we start of by taking the country code and the check digit (first 4 chars)
 -- and place them at the end of the iban
@@ -285,5 +278,4 @@ hasLength string n = (length string) == n
 validDutchIbans = ["NL92MHCB0632607123", "NL33AEGO0743850761", "NL78TRIO0397520348", "NL88FVLB0264875266"]
 invalidDutchIbans = ["NL92MHCB02326071232342", "AR33AEGO0743250761", "NL78TRIO0327520348", "NL88FVLB0264275266"]
 assignment7 = (map (\x -> iban x) validDutchIbans) ++ (map (\x -> not (iban x)) invalidDutchIbans)
--- *Lab2> assignment7
 -- [True,True,True,True,True,True,True,True]
