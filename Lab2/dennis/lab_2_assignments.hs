@@ -75,9 +75,9 @@ triangle a b c
   Assignment 3
   Testing properties strength
 
-  Hours spent: TODO
+  Hours spent: 1.5
   Answers:
-  - TODO
+  I do not know how to return a list of functions.
 
 ------------------------------------------------------------------------------}
 stronger, weaker :: [a] -> (a -> Bool) -> (a -> Bool) -> Bool
@@ -94,14 +94,14 @@ p3and4 :: Int -> Bool
 p3and4 x = (even x && x > 3) || even x
 
 --getDescendingPropertyList ::
-
+--
 
 {------------------------------------------------------------------------------
 
   Assignment 4
   Recognizing Permutations
 
-  Hours spent: TODO
+  Hours spent: 1
   Answers:
 Not containing duplicates in the test lists, we can define the following test sets, such as:
 :q
@@ -143,7 +143,7 @@ containsSameElements (xs,ys) = all (\x -> x `elem` ys) xs
   Assignment 5
   Recognizing and generating derangements
 
-  Hours spent: TODO
+  Hours spent: 1
   Answers:
 
   Properties for deran:
