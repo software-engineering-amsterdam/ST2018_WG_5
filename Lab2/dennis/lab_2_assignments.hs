@@ -124,7 +124,8 @@ True
 *Lab2>  stronger (zip (permutations [1..4]) (permutations [5..8])) isSameLength containsSameElements
 False
 
-With different domains of input the 2 properties have different results. This states that the 2 properties have (partially) disjoint sets of input to which they apply,
+With different domains of input the 2 properties have different results.
+This states that the 2 properties have (partially) disjoint sets of input to which they apply,
 because of this, the properties have no ordering, as they are equal.
 ------------------------------------------------------------------------------}
 
@@ -155,7 +156,6 @@ containsSameElements (xs,ys) = all (\x -> x `elem` ys) xs
   [1,2,3,4,5]
   [1,2,3,4,5,6]
 
-
 ------------------------------------------------------------------------------}
 isDerangement :: Eq a => [a] -> [a] -> Bool
 isDerangement [] [] = True
@@ -166,8 +166,10 @@ deran [] res = res
 deran [x] res = [x]++res
 deran (x:y:xs) res = deran xs (res++[y,x])
 
+prop_LengthIsEqual xs = length xs == length (deran xs [])
 
-
+prop_IndexNotTheSame :: [Int] -> Bool
+prop_IndexNotTheSame xs = if xs == [] || length xs == 1 then True else (xs == (deran xs [])) == False
 {------------------------------------------------------------------------------
 
   Assignment 6
@@ -195,9 +197,10 @@ prop_checkRot13 xs = xs == rot13 (rot13 xs)
   Assignment 7
   Implementing and testing IBAN validation
 
-  Hours spent: TODO
+  Hours spent: 1
   Answers:
-  - TODO
+  I could not think of a way to automatically test the program,
+  so a manual testing was performed with several true and false ibans.
 
 ------------------------------------------------------------------------------}
 
@@ -217,6 +220,4 @@ replaceLettersByDigits xs = concat (map (\x -> if isCapitalLetter x then capital
 iban :: String -> Bool
 iban xs = mod (read(replaceLettersByDigits (moveCharactersToEnd xs 4))) 97 == 1
 
-
 --
-
