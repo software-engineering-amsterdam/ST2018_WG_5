@@ -197,13 +197,13 @@ assignment4 = quickCheck propIsPermutation
 
 propDLength, propDPermutation, propDCommunative:: [Integer] -> [Integer] -> Bool
 -- A and B == equal length
-propDLength xs ys = isDerangement xs ys --> length xs == length ys
+propDLength xs ys = isDerangement xs ys --> (length xs == length ys)
 -- B = A with B is F(A) permutation
-propDPermutation xs ys = isDerangement (nub xs) (nub ys) --> isPermutation (nub xs) (nub ys)
+propDPermutation xs ys = isDerangement xs ys --> isPermutation xs ys
 -- B = A then A = B with F(X) derangement (commutative operations)
 propDCommunative xs ys = isDerangement xs ys --> isDerangement ys xs
 
--- A derangement is a permutation that is NOT mapped to itself.
+-- A derangement is a permutation F(x) that is NOT mapped to itself.
 isDerangement :: (Ord a, Num a) => [a] -> [a] -> Bool
 -- The empty set can be considered a derangement of itself.
 isDerangement [] [] = True
