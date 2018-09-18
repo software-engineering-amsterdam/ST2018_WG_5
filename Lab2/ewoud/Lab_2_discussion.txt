@@ -1,0 +1,26 @@
+I dont vote on myself (ewoud)
+VOTES
+
+1: Dennis
+2: Michael
+3: Michael
+4: Thomas
+5: Michael
+6: Michael
+7: THomas
+
+Comments
+1: Dennis
+comment: Mis bij alle 3 echte test methodes. Misschien ff kijken naar mijn chi square idee.
+2: Michael
+comment: is hardcoded triangles testen niet te simpel? wat voegt dat toe?
+3: Michael
+comment: NONE
+4: Thomas
+comment: NONE
+5: Michael
+comment: NONE
+6: Michael
+comment: NONE
+7: Thomas:
+comments: Ik mis bij jullie checks for countries. Ik zou checken voor valid iban EN country want iedere country heeft zijn eigen structure (check mijn idee).
