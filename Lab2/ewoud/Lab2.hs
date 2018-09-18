@@ -187,17 +187,17 @@ propDLength, propDPermutation, propDCommunative:: [Integer] -> [Integer] -> Bool
 -- A and B == equal length
 propDLength xs ys = isDerangement xs ys --> length xs == length ys
 -- B = A with B with is F(A) permutation
-propDPermutation xs ys = isDerangement xs ys --> isPermutation xs ys
+propDPermutation xs ys = isDerangement (nub xs) (nub ys) --> isPermutation (nub xs) (nub ys)
 -- B = A then A = B with F(X) derangement (commutative operations)
 propDCommunative xs ys = isDerangement xs ys --> isDerangement ys xs
 -- propDLength xs ys = isDerangement xs ys ?
 
-isDerangement :: Eq a => [a] -> [a] -> Bool
+isDerangement :: (Ord a, Num a) => [a] -> [a] -> Bool
 -- The empty set can be considered a derangement of itself.
 isDerangement [] [] = True
 isDerangement xs ys
-    -- check if equal length
-    | length xs /= length ys = False
+    -- check if lists are equal
+    | (sort $ nub xs) /= (sort $ nub ys) = False
     -- check if each individual element maps to eachother.
     | or (zipWith (==) xs ys) = False
     | otherwise = True
