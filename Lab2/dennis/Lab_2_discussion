@@ -1,0 +1,27 @@
+I do vote for myself (dennis)
+VOTES
+
+1: Ewoud/Dennis
+2: Ewoud/Thomas
+3: Michael
+4: Ewoud
+5: Ewoud
+6: Thomas/Dennis
+7: Michael/Thomas
+
+Comments
+1: Ewoud
+comment: Die van Ewoud test veel beter, echter is die van Dennis heel simpel en makkelijk te lezen.
+Afhankelijk van de exacte opdracht is de een of de ander beter.
+2: Ewoud/Thomas
+comment: Allebei goede tests.
+3: Michael
+comment: Gebruik van tuples lijkt mij de beste optie hier.
+4: Ewoud
+comment: Beste property vergeleken met de rest.
+5: Ewoud
+comment: NONE
+6: Dennis/Thomas
+comment: NONE
+7: Thomas:
+comments: Het niet implementeren van country checks, mits een goede comment erbij waarom, lijkt me juist goed omdat dit toch alleen een lengte check is.
