@@ -50,6 +50,27 @@ testProbs n = do
             let x4 = getFloatsInInterval 0.75 1 xs
             return [length x1, length x2, length x3, length x4]
 
+-- Chi square test
+-- See dice example for understanding: https://nl.wikipedia.org/wiki/Chi-kwadraattoets
+chiSquare :: Int -> [Int] -> Float
+chiSquare n xs = fromIntegral (sum [(x - n)^2 | x <- xs]) / (fromIntegral (length xs) / fromIntegral (length(nub xs)))
+
+assignment1 :: Int -> IO Float
+assignment1 x = do
+    -- generate numbers
+    genlist <- testProbs x
+    -- bin numbers into quartile
+    let bincount = genlist
+    let pvar = chiSquare x bincount
+    -- check null hypothesis: random generator is random!
+    -- p value = 0.05, DF = 3, x^2 = 7.815
+    if 7.815 > pvar 
+        then putStrLn ("not random") 
+        else putStrLn ("random!") 
+    return pvar
+
+doAssign1 = assignment1 10000
+
 {------------------------------------------------------------------------------
 
   Assignment 2
