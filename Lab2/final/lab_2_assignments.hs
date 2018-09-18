@@ -192,38 +192,32 @@ assignment4 = quickCheck propIsPermutation
   Answers:
   - So derangement is the same as a permutation with the additional property:
     "Nothing can be on the same position as the original"
-  - The new "notOnSamePositions" is just as strong as the "isPermutation" property
-    - Output:
-    *Lab2> stronger ass5Tests notOnSamePositions isPermutation
-          False
-    *Lab2> stronger ass5Tests isPermutation notOnSamePositions
-          False
 
 ------------------------------------------------------------------------------}
-deran :: Int -> [[Int]]
-deran n = filter (\x -> isDerangement (list, x)) (permutations list)
-  where list = [0..(n-1)]
 
-deranFromList :: [Int] -> [[Int]]
-deranFromList list = filter (\x -> isDerangement (list, x)) (permutations list)
+propDLength, propDPermutation, propDCommunative:: [Integer] -> [Integer] -> Bool
+-- A and B == equal length
+propDLength xs ys = isDerangement xs ys --> length xs == length ys
+-- B = A with B is F(A) permutation
+propDPermutation xs ys = isDerangement (nub xs) (nub ys) --> isPermutation (nub xs) (nub ys)
+-- B = A then A = B with F(X) derangement (commutative operations)
+propDCommunative xs ys = isDerangement xs ys --> isDerangement ys xs
 
-isDerangement :: Eq a => ([a],[a]) -> Bool
-isDerangement lists = isPermutation (fst lists) (snd lists) && notOnSamePositions lists
+-- A derangement is a permutation that is NOT mapped to itself.
+isDerangement :: (Ord a, Num a) => [a] -> [a] -> Bool
+-- The empty set can be considered a derangement of itself.
+isDerangement [] [] = True
+isDerangement xs ys
+    -- check if lists are equal
+    | (sort $ nub xs) /= (sort $ nub ys) = False
+    -- check if each individual element maps to eachother.
+    | or (zipWith (==) xs ys) = False
+    | otherwise = True
 
-notOnSamePositions :: Eq a => ([a],[a]) -> Bool
-notOnSamePositions (xs, ys) = all (\x -> x) [(xs !! x) /= (ys !! x) | x <- [0..((length shortestList) - 1)]]
-  where
-    shortestList = if length xs <= length ys then xs else ys
-
-ass5Valids  = [([2,1,3], [3,2,1])]
-ass5Invalids  = [([1,2,3], [3,1,2,4]), ([1,2,3], [3,1,1]), ([1,2,3], [3,1,9]), ([1,2,3], [3,2,1])]
-
-ass5BasicTest = (map (\x -> isDerangement x) ass5Valids) ++ (map (\x -> not (isDerangement x)) ass5Invalids)
--- [True,True,True,True,True]
-ass5Test :: [Int] -> Bool
-ass5Test list = all (\x -> x) (map (\x -> isDerangement (x, list)) (deranFromList list))
--- quickCheck ass4Test
--- (13 tests).... and running (slow because of big lists being generated)
+assignment5 = do
+    quickCheckResult propDLength
+    quickCheckResult propDPermutation
+    quickCheckResult propDCommunative
 
 {------------------------------------------------------------------------------
 
