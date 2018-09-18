@@ -49,8 +49,6 @@ testProbs n = do
             let x3 = getFloatsInInterval 0.5 0.75 xs
             let x4 = getFloatsInInterval 0.75 1 xs
             return [length x1, length x2, length x3, length x4]
---TODO add Ewoud's Chi Test
-
 
 {------------------------------------------------------------------------------
 
@@ -99,7 +97,6 @@ assignment2 = [
   all (\x -> x == Other)  [triangle 2 3 4, triangle 4 5 6]
   ]
   -- [True,True,True,True,True]
-  --TODO add Ewoud's quickCheck tests
 
 {------------------------------------------------------------------------------
 
@@ -163,13 +160,14 @@ propIsPermutation xs ys = isPermutation (nub xs) (nub ys) == bijective
     where bijective = length (nub xs) == length (intersect (nub xs) (nub ys)) && length (nub ys) == length (intersect (nub xs) (nub ys))
 
 assignment4 = quickCheck propIsPermutation
+-- +++ OK, passed 100 tests.
 
 {------------------------------------------------------------------------------
 
   Assignment 5
   Recognizing and generating derangements
 
-  Hours spent: 1.5
+  Hours spent: 1h
   Answers:
   - So derangement is the same as a permutation with the additional property:
     "Nothing can be on the same position as the original"
@@ -181,32 +179,30 @@ assignment4 = quickCheck propIsPermutation
           False
 
 ------------------------------------------------------------------------------}
--- Derangement according to wikipedia:
--- A derangement is a permutation that is NOT mapped to itself.
-propDLength, propDPermutation, propDCommunative:: [Integer] -> [Integer] -> Bool
--- This means that:
--- A and B == equal length
-propDLength xs ys = (isDerangement xs ys) --> ((length xs) == (length ys))
--- B = A with B with is F(A) permutation
-propDPermutation xs ys = isDerangement xs ys --> isPermutation xs ys
--- B = A then A = B with F(X) derangement (commutative operations)
-propDCommunative xs ys = isDerangement xs ys --> isDerangement ys xs
--- propDLength xs ys = isDerangement xs ys ?
+deran :: Int -> [[Int]]
+deran n = filter (\x -> isDerangement (list, x)) (permutations list)
+  where list = [0..(n-1)]
 
-isDerangement :: Eq a => [a] -> [a] -> Bool
--- The empty set can be considered a derangement of itself.
-isDerangement [] [] = True
-isDerangement xs ys
-    -- check if equal length
-    | length xs /= length ys = False
-    -- check if each individual element maps to eachother.
-    | or (zipWith (==) xs ys) = False
-    | otherwise = True
+deranFromList :: [Int] -> [[Int]]
+deranFromList list = filter (\x -> isDerangement (list, x)) (permutations list)
 
-assignment5 = do
-    quickCheckResult propDLength
-    quickCheckResult propDPermutation
-    quickCheckResult propDCommunative
+isDerangement :: Eq a => ([a],[a]) -> Bool
+isDerangement lists = isPermutation (fst lists) (snd lists) && notOnSamePositions lists
+
+notOnSamePositions :: Eq a => ([a],[a]) -> Bool
+notOnSamePositions (xs, ys) = all (\x -> x) [(xs !! x) /= (ys !! x) | x <- [0..((length shortestList) - 1)]]
+  where
+    shortestList = if length xs <= length ys then xs else ys
+
+ass5Valids  = [([2,1,3], [3,2,1])]
+ass5Invalids  = [([1,2,3], [3,1,2,4]), ([1,2,3], [3,1,1]), ([1,2,3], [3,1,9]), ([1,2,3], [3,2,1])]
+
+ass5BasicTest = (map (\x -> isDerangement x) ass5Valids) ++ (map (\x -> not (isDerangement x)) ass5Invalids)
+-- [True,True,True,True,True]
+ass5Test :: [Int] -> Bool
+ass5Test list = all (\x -> x) (map (\x -> isDerangement (x, list)) (deranFromList list))
+-- quickCheck ass4Test
+-- (13 tests).... and running (slow because of big lists being generated)
 
 {------------------------------------------------------------------------------
 
@@ -289,3 +285,4 @@ iban :: String -> Bool
 iban xs = validateIban xs && validateCountry xs
 
 assignment7 = (map iban ibanCorrect) ++ (map (\x -> not (iban x)) ibanFalse)
+--[True,True,True,True,True,True,True,True]
