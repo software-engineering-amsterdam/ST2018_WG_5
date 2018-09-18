@@ -5,6 +5,7 @@ import Data.Char
 import Data.Function
 import System.Random
 import Test.QuickCheck
+import Data.Maybe
 import Text.Show.Functions
 
 (-->) :: Bool -> Bool -> Bool
@@ -185,7 +186,7 @@ assignment4 = quickCheck propIsPermutation
 propDLength, propDPermutation, propDCommunative:: [Integer] -> [Integer] -> Bool
 -- This means that:
 -- A and B == equal length
-propDLength xs ys = isDerangement xs ys --> length xs == length ys
+propDLength xs ys = (isDerangement xs ys) --> ((length xs) == (length ys))
 -- B = A with B with is F(A) permutation
 propDPermutation xs ys = isDerangement xs ys --> isPermutation xs ys
 -- B = A then A = B with F(X) derangement (commutative operations)
@@ -287,4 +288,4 @@ validateCountry xs = length xs == fromMaybe 0 (lookup (take 2 xs) countryFormat)
 iban :: String -> Bool
 iban xs = validateIban xs && validateCountry xs
 
-assignment7 = (all (==True) (map iban ibanCorrect)) ++ (all (==False) (map iban ibanFalse))
+assignment7 = (map iban ibanCorrect) ++ (map (\x -> not (iban x)) ibanFalse)
