@@ -1,0 +1,20 @@
+I did not vote for myself (Thomas)
+Votes:
+
+1: Ewoud/Dennis
+2: Michael
+3: Michael
+4: Ewoud
+5: Ewoud
+6: Ewoud
+7: Ewoud
+
+Comments:
+1: I prefer Ewoud's solution, because it tests the best.
+2: I prefer Michael's solution, because is has the best answers which also include explanations of the
+   used logic. Also the code is very easy to read.
+3: I prefer Michael's solution.
+4: I prefer Ewoud's solution.
+5: I prefer Ewoud's solution, because of the conciseness.
+6: I prefer Ewoud's solution, because it also accounts for capital letters.
+7: I prefer Ewoud's solution, because it also shows how he would solve the multiple country issue.
