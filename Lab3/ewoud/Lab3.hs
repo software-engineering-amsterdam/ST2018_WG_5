@@ -77,6 +77,54 @@ assignment1 = do
     Assignment 2
     Time:  min
 
-    STATE: 
+    STATE: wtf willen ze gewoon iets heel simpels zoals dit?
+
+------------------------------------------------------------------------------}
+
+-- idee?
+assignment2 = do
+    print ((parse "+(1 2)") == ([Dsj [Prop 1, Prop 2]]))
+
+
+{------------------------------------------------------------------------------
+    Assignment 3
+    Time:  min
+
+    STATE: Test if logic is correct
+
+------------------------------------------------------------------------------}
+
+-- info used:
+-- https://ocw.mit.edu/courses/health-sciences-and-technology/hst-947-medical-artificial-intelligence-spring-2005/lecture-notes/ch10_logic2a.pdf
+-- https://math.stackexchange.com/questions/214338/how-to-convert-to-conjunctive-normal-form
+
+-- Applies the 2 distributive laws when applicable
+-- (P⋁(Q⋀R)) ↔ (P⋁Q)⋀(P⋁R) 
+-- and
+-- (P⋀(Q⋁R)) ↔ (P⋀Q)⋁(P⋀R)
+distributiveLaws :: Form -> Form 
+-- Same as nnf
+distributiveLaws (Prop x) = Prop x
+distributiveLaws (Neg (Prop x)) = Neg (Prop x)
+distributiveLaws (Neg (Neg f)) = nnf f
+-- (P⋁(Q⋀R)) ↔ (P⋁Q)⋀(P⋁R)
+distributiveLaws (Dsj [p, (Cnj [q, r])]) = Cnj [(Dsj [p, q]), (Dsj [p, r])]
+-- (P⋀(Q⋁R)) ↔ (P⋀Q)⋁(P⋀R)
+distributiveLaws (Cnj [p, (Dsj [q, r])]) = Dsj [(Cnj [p, q]), (Cnj [p, r])]
+
+-- Functions as:
+-- 1) Eliminate arrows using definitions : arrowfree
+-- 2) Drive in negation using de morgans law : nnf
+-- 3) Distributive Laws to distribute or over and : distributiveLaws
+convertToCnf :: Form -> Form
+convertToCnf x = distributiveLaws $ nnf $ arrowfree x
+
+--assignment3 = do
+
+{------------------------------------------------------------------------------
+    Assignment 4
+    Time:  min
+
+    STATE: ik ga dit in quickcheck doen, weet nog neit hoe
 
 ------------------------------------------------------------------------------}
