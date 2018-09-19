@@ -180,18 +180,15 @@ assignment4 = quickCheck propIsPermutation
     - quickechk generates repeating numbers [1,1,1] or [4,4,4]. This should not happen!
 ------------------------------------------------------------------------------}
 
--- Derangement according to wikipedia:
--- A derangement is a permutation that is NOT mapped to itself.
 propDLength, propDPermutation, propDCommunative:: [Integer] -> [Integer] -> Bool
--- This means that: 
 -- A and B == equal length
-propDLength xs ys = isDerangement xs ys --> length xs == length ys
--- B = A with B with is F(A) permutation
-propDPermutation xs ys = isDerangement (nub xs) (nub ys) --> isPermutation (nub xs) (nub ys)
+propDLength xs ys = isDerangement xs ys --> (length xs == length ys)
+-- B = A with B is F(A) permutation
+propDPermutation xs ys = isDerangement xs ys --> isPermutation xs ys
 -- B = A then A = B with F(X) derangement (commutative operations)
 propDCommunative xs ys = isDerangement xs ys --> isDerangement ys xs
--- propDLength xs ys = isDerangement xs ys ?
 
+-- A derangement is a permutation that is NOT mapped to itself.
 isDerangement :: (Ord a, Num a) => [a] -> [a] -> Bool
 -- The empty set can be considered a derangement of itself.
 isDerangement [] [] = True
