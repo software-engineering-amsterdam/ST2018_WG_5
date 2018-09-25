@@ -3,6 +3,7 @@ module Lab3 where
 import Data.List
 import System.Random
 import Test.QuickCheck
+import Control.Monad(liftM, liftM2)
 import Lecture3
                            
 -- Assignment 1
@@ -28,7 +29,7 @@ equiv :: Form -> Form -> Bool
 equiv a b = all (\ x -> evl x a == evl x b) (allVals b) && all (\ x -> evl x a == evl x b) (allVals a)
 
 -- Assignment 2
--- TODO:
+-- TODO
 
 -- Assignment 3
 
@@ -46,4 +47,27 @@ cnf (Neg (Dsj fs)) = Cnj (map (cnf.Neg) fs)
 toCNF :: [Form] -> [Form]
 toCNF x = map cnf (map nnf (map arrowfree x))
 
--- Assignment 4
+--Assignment 4
+boundedForm :: Gen Form
+boundedForm = sized form where
+    form :: Int -> Gen Form
+    form 1 = return (Prop 1)
+    form n = oneof [return (Prop n), 
+                    liftM Neg (form (n-1)),
+                    liftM2 Impl (form (n `div` 2)) (form (n `div` 2)),
+                    --liftM Cnj ( [form (n `div` 2)] ++ [form (n `div` 2)] ),
+                    liftM Cnj [ (form (n `div` 2)), (form (n `div` 2)) ]
+                   ]
+
+-- instance Arbitrary Form where
+--     arbitrary = 
+--         oneof [return (Prop 1),
+--                liftM Neg arbitrary,
+--                liftM Cnj arbitrary,
+--                --liftM Dsj arbitrary,
+--                --liftM2 Impl arbitrary arbitrary,
+--                liftM2 Equiv arbitrary arbitrary
+--                ]
+
+testnow = verboseCheck (forAll boundedForm satisfiable)
+-- testnow = generate arbitrary :: IO Form
