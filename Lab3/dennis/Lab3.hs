@@ -53,15 +53,30 @@ dl (Neg f) = Neg (dl f)
 dl (Cnj [f1, (Dsj [f2, f3])]) = Dsj [dl (Cnj [dl f1, dl f2]), dl (Cnj [dl f1, dl f3])]
 dl (Cnj [(Dsj [f2, f3]), f1]) = Dsj [dl (Cnj [dl f1, dl f2]), dl (Cnj [dl f1, dl f3])]
 dl (Cnj fs) = Cnj (map dl fs)
---dl (Dsj [(Cnj [f1, f2]), (Cnj [f3, f4])]) = Cnj [dl (Dsj [Cnj [dl f1, dl f2]), Dsj ...]
+dl (Dsj [(Cnj [f1, f2]), (Cnj [f3, f4])]) = Cnj [dl (Dsj [dl f1, dl f3]), dl (Dsj [dl f1, dl f4]), dl (Dsj [dl f2, dl f3]), dl (Dsj [dl f2, dl f4])]
 dl (Dsj [f1, (Cnj [f2, f3])]) = Cnj [dl (Dsj [dl f1, dl f2]), dl (Dsj [dl f1, dl f3])]
 dl (Dsj [(Cnj [f2, f3]), f1]) = Cnj [dl (Dsj [dl f1, dl f2]), dl (Dsj [dl f1, dl f3])]
 dl (Dsj fs) = Dsj (map dl fs)
 dl (Impl f1 f2) = Impl (dl f1) (dl f2)
 dl (Equiv f1 f2) = Equiv (dl f1) (dl f2)
 
+fl :: Form -> Form
+fl (Prop x) = Prop x
+fl (Neg f) = Neg (fl f)
+fl (Cnj [f1, (Cnj [f2, f3])]) = Cnj [fl f1, fl f2, fl f3]
+fl (Cnj [(Cnj [f2, f3]), f1]) = Cnj [fl f1, fl f2, fl f3]
+fl (Cnj fs) = Cnj (map fl fs)
+fl (Dsj [f1, (Dsj [f2, f3])]) = Dsj [fl f1, fl f2, fl f3]
+fl (Dsj [(Dsj [f2, f3]), f1]) = Dsj [fl f1, fl f2, fl f3]
+fl (Dsj fs) = Dsj (map fl fs)
+fl (Impl f1 f2) = Impl (fl f1) (fl f2)
+fl (Equiv f1 f2) = Equiv (fl f1) (fl f2)
+
 toCnf :: Form -> Form
-toCnf f = dl $ nnf $ arrowfree f
+toCnf f = fl $ dl $ nnf $ arrowfree f
+
+toCnf2 :: [Form] -> [Form]
+toCnf2 f = map toCnf f
 
 {------------------------------------------------------------------------------
     Assignment 4
@@ -71,11 +86,11 @@ toCnf f = dl $ nnf $ arrowfree f
 
 genForm :: Int -> Form
 genForm x | x < 5 = Prop x
-          | x < 10 =  Neg (genForm (x-1))
-          | x < 15 = Cnj [genForm (x-5), genForm (x-6)]
-          | x < 20 = Dsj [genForm (x-1), genForm (x-2)]
-          | x < 25 = Impl (genForm (x-1)) (genForm (x-2))
-          | x < 30 = Equiv (genForm (x-1)) (genForm (x-2))
+          | x < 7 =  Neg (genForm (x-1))
+          | x < 10 = Cnj [genForm (x-5), genForm (x-6)]
+          | x < 15 = Dsj [genForm (x-1), genForm (x-2)]
+          | x < 20 = Impl (genForm (x-1)) (genForm (x-2))
+          | x < 25 = Equiv (genForm (x-1)) (genForm (x-2))
           | otherwise = (Prop x)
 
 instance Arbitrary Form where
@@ -121,5 +136,3 @@ isDistributed (Equiv f1 f2) = all (isDistributed) [f1, f2]
 
 prop_IsDistributed :: Form -> Bool
 prop_IsDistributed f = isDistributed (toCnf f)
-
--- +(*(-4 4) *(4 -4))
