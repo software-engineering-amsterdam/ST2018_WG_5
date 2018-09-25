@@ -76,7 +76,7 @@ flatten :: Form -> Form
 flatten (Prop x) = Prop x
 flatten (Neg (Prop x)) = Neg (Prop x)
 flatten (Neg (Neg f)) = flatten f
-flatten (Cnj [a, (Dsj (b:c))]) = Cnj ([flatten a, flatten b]++(map flatten c))
+flatten (Cnj [a, (Cnj (b:c))]) = Cnj ([flatten a, flatten b]++(map flatten c))
 flatten (Dsj [a, (Dsj (b:c))]) = Dsj ([flatten a, flatten b]++(map flatten c))
 flatten (Cnj ((Cnj (a:b)):c)) = Cnj ([flatten a]++(map flatten b)++(map flatten c))
 flatten (Dsj ((Dsj (a:b)):c)) = Dsj ([flatten a]++(map flatten b)++(map flatten c))
