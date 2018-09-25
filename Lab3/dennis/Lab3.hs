@@ -43,7 +43,7 @@ a2 = do
 
 {------------------------------------------------------------------------------
     Assignment 3
-    Time:  75 min
+    Time: 180 min
 
 ------------------------------------------------------------------------------}
 
@@ -56,8 +56,6 @@ dl (Cnj fs) = Cnj (map dl fs)
 dl (Dsj [(Cnj [f1, f2]), (Cnj [f3, f4])]) = Cnj [dl (Dsj [dl f1, dl f3]), dl (Dsj [dl f1, dl f4]), dl (Dsj [dl f2, dl f3]), dl (Dsj [dl f2, dl f4])]
 dl (Dsj [f1, (Cnj [f2, f3])]) = Cnj [dl (Dsj [dl f1, dl f2]), dl (Dsj [dl f1, dl f3])]
 dl (Dsj [(Cnj [f2, f3]), f1]) = Cnj [dl (Dsj [dl f1, dl f2]), dl (Dsj [dl f1, dl f3])]
---dl (Dsj [(Dsj [f1, f2]), f3]) = Dsj [dl f1, dl f2, dl f3]
---dl (Dsj [f3, (Dsj [f1, f2])]) = Dsj [dl f1, dl f2, dl f3]
 dl (Dsj fs) = Dsj (map dl fs)
 dl (Impl f1 f2) = Impl (dl f1) (dl f2)
 dl (Equiv f1 f2) = Equiv (dl f1) (dl f2)
@@ -83,7 +81,7 @@ toCnf2 f = map toCnf f
 
 {------------------------------------------------------------------------------
     Assignment 4
-    Time:  min
+    Time: 180 min
 
 ------------------------------------------------------------------------------}
 
