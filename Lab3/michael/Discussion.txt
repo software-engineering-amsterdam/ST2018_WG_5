@@ -1,0 +1,15 @@
+Assignment 1: Ewoud
+Note: Seems to be correct and a smart way of solving the last 2. Also good tests!
+
+Assignment 2: Michael
+Note: I seem the be the only one that came up with some working quickCheck solution.
+Only issue is that it tends to go deeeeep and generate a very big almost endless nested formula.
+
+Assignment 3: Michael
+Did I miss the point here? It looks quite simple and it works hmmm. So maybe mine is not correct
+in which I'd choose Thomas or Ewoud.
+
+Assignment 4: Michael
+Same story as 2
+
+Side note: I'm note sure which generator method is best :/
