@@ -1,0 +1,37 @@
+WIP dennis is missing, will add later
+VOTES (not voting for myself):
+1: Michael
+2: Michael
+3: Thomas
+4: Michael/Thomas
+
+DISCUSSION:
+
+1:
+I think that they want us to use the logic as building blocks.
+So you have to rewrite definitions using other definitions.
+Fits the logic + haskell way of thinking (??? ASSUME).
+
+
+2:
+Motivation: rest has nothing :').
+I believe the actual generator from michael belongs to assignment 4 but
+we can (should?) use his approach to test the parser.
+
+3:
+Regarding michaels confusement.
+I believe we had to do something similar to arrowfree and nnf in the source of Lecture3.hs 
+AKA implement the cnf (step 3) to complement arrowfree (step 1) and nnf (step 2).
+
+4:
+I believe using the arbitrary (instance Arbitrary Form where) is the correct
+approach but i have no source for that.
+I do like the extensive tests Thomas has.
+Perhaps combine or use go for thomas.
+
+NOTES regarding my own work:
+
+I think what i have done for assignment 3 and 4 is correct
+but I have a hard time actually veryfing it.
+Quickcheck seems happy but I only manually checked/verified with shorter
+input on paper.
