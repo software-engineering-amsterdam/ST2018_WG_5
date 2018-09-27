@@ -225,7 +225,7 @@ testSymClosDouble = symClos [(1,1), (2,3), (4,3), (6,4)]
 
   Assignment 6
 
-  Hours spent: ?
+  Hours spent: 1
   Answer:
 
 ------------------------------------------------------------------------------}
@@ -235,28 +235,49 @@ infixr 5 @@
 (@@) :: Eq a => Rel a -> Rel a -> Rel a
 r @@ s = nub [ (x,z) | (x,y) <- r, (w,z) <- s, y == w ]
 
-recurseTrClos :: Ord a => Rel a -> Rel a -> Rel a
-recurseTrClos [] full = []
-recurseTrClos x full = temp++(recurseTrClos temp full) where temp = x @@ full
+recurseTrClos :: Ord a => Rel a -> Rel a -> Rel a -> Rel a
+recurseTrClos [] added full = []
+recurseTrClos x added full = if all (\x -> x `elem` added) temp then [] 
+                            else temp++(recurseTrClos temp (added++temp) full) where temp = x @@ full
 
 removeDuplicates :: Eq a => [a] -> [a]
 removeDuplicates [] = []
 removeDuplicates (x:xs) = x : removeDuplicates (filter (/=x) xs)
 
 trClos :: Ord a => Rel a -> Rel a
-trClos a = removeDuplicates (concatMap (\x -> x : recurseTrClos [x] a) a)
+trClos a = removeDuplicates (concatMap (\x -> x : recurseTrClos [x] [x] a) a)
 
 testTrClos = trClos [(1,2),(2,3),(3,4)]
 testTrClos2 = trClos [(1,2),(1,4),(2,3),(3,4)]
+testTrClos3 = trClos [(1,2),(1,3),(1,4),(4,1)]
 
 {------------------------------------------------------------------------------
 
   Assignment 7
 
-  Hours spent: ?
+  Hours spent: 2
  
 ------------------------------------------------------------------------------}
 
+isSubset :: Eq a => Rel a -> Rel a -> Bool
+isSubset xs ys = all (\ x -> x `elem` ys) xs
+
+isSwappedSubset :: Eq a => Rel a -> Rel a -> Bool
+isSwappedSubset xs zs = all (\ (x,y) -> (x,y) `elem` zs && (y,x) `elem` zs ) xs
+
+testSymmetry :: Rel Int -> Bool
+testSymmetry a = isSubset a sym && isSwappedSubset a sym
+    where sym = symClos a
+
+isTransitive :: Eq a => Rel a -> Bool
+isTransitive xs = and [ elem(a,c) xs | (a,b) <- xs, (c,d) <- xs, b == c ]
+
+testTransitive :: Rel Int -> Bool
+testTransitive a = isSubset a trans && isTransitive trans
+    where trans = trClos a 
+
+quickCheckSymmetry = quickCheck testSymmetry
+quickCheckTransitivity = quickCheck testTransitive
 
 {------------------------------------------------------------------------------
 
