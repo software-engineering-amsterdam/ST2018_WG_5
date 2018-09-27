@@ -286,6 +286,9 @@ assignment6Test2 = trClos [(1,2),(2,3),(3,4),(4,5)]
     -   For both the original set MUST be a subset of the newly created set (we can use subSet for this)
 
 ------------------------------------------------------------------------------}
+isSubset :: Eq a => Rel a -> Rel a -> Bool
+isSubset xs ys = all (\x -> elem x ys) xs
+
 -- Checks if every relation in the set is also there in a swapped version
 isSym :: Eq a => Rel a -> Bool
 isSym xs = and (map (\x -> elem (swap x) xs) xs)
@@ -297,11 +300,40 @@ swap (x,y) = (y,x)
 isTrans :: Eq a => Rel a -> Bool
 isTrans xs = and [elem(a,d) xs | (a,b) <- xs, (c,d) <- xs, b == c]
 
+-- Perform subset and sym check
+assignment7SymTest :: (Ord a, Eq a) => Rel a -> Bool
+assignment7SymTest xs = isSym result && (isSubset xs result)
+            where
+                result = symClos xs
+
+-- Perform subset and trans check
+assignment7TransTest :: (Ord a, Eq a) => Rel a -> Bool
+assignment7TransTest xs = isTrans result && (isSubset xs result)
+            where
+                result = trClos xs
+
+-- quickCheck assignment7SymTest
+-- Output: +++ OK, passed 100 tests.
+-- quickCheck assignment7TransTest
+-- Output: +++ OK, passed 100 tests.
+
 {------------------------------------------------------------------------------
 
   Assignment 8
 
-  Hours spent: 
+  Hours spent: 0.25
+  Answer:
+    This is not true, the order of applying the 2 operations DOES matter. The main point why it does is
+    that transitivity is also true whenever 2 pairs have nothing to do with each other. When symmetry is
+    added first this causes the situation to change completely.
+    Example:
+    sym -> trans
+    {(1,3),(2,4)} -> {(1,3),(3,1),(2,4),(4,2)} -> {(1,3),(3,1),(2,4),(4,2),(1,1),(3,3),(2,2),(4,4)}
+
+    trans -> sym
+    {(1,3),(2,4)} -> {(1,3),(2,4)} -> {(1,3),(3,1),(2,4),(4,2)}
+
+    As you can see the result is different when the order of applying the operations is swapped.
 
 ------------------------------------------------------------------------------}
 
