@@ -84,7 +84,8 @@ unionSet (Set (x:xs)) set2  =
 
   Hours spent: ?
   Answer:
-    - TODO
+    - Notation in example 4.6 doesn’t really make the point clear for me
+    - Exercise 4.26 and 4.27. Coming up with proof (proof in general)
 
 ------------------------------------------------------------------------------}
 
@@ -211,7 +212,9 @@ assignment3QuickCheck = do
 
   Hours spent:
   Answer:
-    - TODO
+    - Again coming up with proof in general
+    - 5.63,5.64,6.65 is not clear for me
+    - Partitions. And especially such notation used at 5.83
 
 ------------------------------------------------------------------------------}
 
@@ -336,4 +339,3 @@ assignment7TransTest xs = isTrans result && (isSubset xs result)
     As you can see the result is different when the order of applying the operations is swapped.
 
 ------------------------------------------------------------------------------}
-
