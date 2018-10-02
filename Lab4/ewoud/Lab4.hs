@@ -233,11 +233,20 @@ prop_trClos setA = isSubSet setA setB && isTransitiveSet setB
 ------------------------------------------------------------------------------}
 
 -- Generates listed tuples in the form of [(x,y)] as [(22,34)]
-testCases :: IO (Rel Int)
+testCases  :: IO (Rel Int)
 testCases = do
     x <- randomInt
     y <- randomInt  
-    return [(x,y)]
+    return ([(x, y)])
 
-prop_counterExample :: Bool
-prop_counterExample = (trClos (symClos testCases)) == (symClos (trClos testCases))
+testfin = do
+    relA <- testCases
+    let transSymRelA = trClos (symClos relA)
+    let symTransRelA = symClos (trClos relA)
+    print relA
+    print $ transSymRelA == symTransRelA
+
+-- FIXME?
+-- wanna use testCases in my prop
+--prop_counterExample :: Bool
+--prop_counterExample = (trClos (symClos testCases)) == (symClos (trClos testCases))
