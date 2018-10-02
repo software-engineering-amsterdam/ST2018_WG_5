@@ -3,88 +3,37 @@ module Lab4 where
 import Data.List
 import System.Random
 import Test.QuickCheck
-
-{-- START OF LECTURE CODE --}
-{-- Sets implemented as ordered lists without duplicates --}
-
-newtype Set a = Set [a] deriving (Eq,Ord)
-
-instance (Show a) => Show (Set a) where
-    showsPrec _ (Set s) str = showSet s str
-
-showSet []     str = showString "{}" str
-showSet (x:xs) str = showChar '{' ( shows x ( showl xs str))
-     where showl []     str = showChar '}' str
-           showl (x:xs) str = showChar ',' (shows x (showl xs str))
-
-emptySet  :: Set a
-emptySet = Set []
-
-isEmpty  :: Set a -> Bool
-isEmpty (Set []) = True
-isEmpty _        = False
-
-inSet  :: (Ord a) => a -> Set a -> Bool
-inSet x (Set s) = elem x (takeWhile (<= x) s)
-
-subSet :: (Ord a) => Set a -> Set a -> Bool
-subSet (Set []) _       = True
-subSet (Set (x:xs)) set = (inSet x set) && subSet (Set xs) set
-
-insertSet :: (Ord a) => a -> Set a -> Set a
-insertSet x (Set s) = Set (insertList x s)
-
-insertList x [] = [x]
-insertList x ys@(y:ys') = case compare x y of
-                                 GT -> y : insertList x ys'
-                                 EQ -> ys
-                                 _  -> x : ys
-
-deleteSet :: Ord a => a -> Set a -> Set a
-deleteSet x (Set s) = Set (deleteList x s)
-
-deleteList x [] = []
-deleteList x ys@(y:ys') = case compare x y of
-                                 GT -> y : deleteList x ys'
-                                 EQ -> ys'
-                                 _  -> ys
-
-list2set :: Ord a => [a] -> Set a
-list2set [] = Set []
-list2set (x:xs) = insertSet x (list2set xs)
--- list2set xs = Set (foldr insertList [] xs)
-
-powerSet :: Ord a => Set a -> Set (Set a)
-powerSet (Set xs) =
-   Set (sort (map (\xs -> (list2set xs)) (powerList xs)))
-
-powerList  :: [a] -> [[a]]
-powerList  [] = [[]]
-powerList  (x:xs) = (powerList xs)
-                     ++ (map (x:) (powerList xs))
-
-takeSet :: Eq a => Int -> Set a -> Set a
-takeSet n (Set xs) = Set (take n xs)
-
-infixl 9 !!!
-
-(!!!) :: Eq a => Set a -> Int -> a
-(Set xs) !!! n = xs !! n
-
-unionSet :: (Ord a) => Set a -> Set a -> Set a
-unionSet (Set [])     set2  =  set2
-unionSet (Set (x:xs)) set2  =
-   insertSet x (unionSet (Set xs) set2)
-
-{-- END OF LECTURE CODE --}
+import SetOrd
 
 {------------------------------------------------------------------------------
 
   Assignment 1
 
-  Hours spent: TODO
   Answer:
-    - TODO
+    - The Russel Paradox is not entirely clear to me.
+    - The halts function is not very clear to me.
+    - Page 136
+    - Notation in example 4.6 doesn’t really make the point clear for me
+    - Exercise 4.26 and 4.27. Coming up with proof (proof in general)
+    - What is a real world use case of a complement?
+    - Are there other ways to represent sets in Haskell which do not use lists?
+
+    -- Remark. The question whether the equation a = { a } has solutions (or, more
+    -- generally,whether sets a exist such that a ∈ a) is answered differentlyby different
+    -- axiomatizations of set theory.
+    --
+    -- What does this mean?
+
+    -- Page 137
+    -- Exercise 4.11 Explain that ∅ != {∅}
+    -- Is that because {∅} is not empty because it has an empty element?
+
+    -- Page 149
+    -- Exercise 4.40 1. Assume that A and B are non-empty and that A × B = B × A. Show that A = B.
+    -- 2. Show by means of an example that the condition of non-emptiness in 1 is necessary. (Did you use this in your proof of 1?)
+    --
+    -- I think i can solve this problem using a very simple case where A = B = {1,2}
+    -- But how can I verify that my simple example is enough to proof that non-emptiness in 1 is necessary
 
 ------------------------------------------------------------------------------}
 
@@ -114,7 +63,28 @@ unionSet (Set (x:xs)) set2  =
 
   Hours spent:
   Answer:
-    - TODO
+    - Why is R = {(1,4),(1,5),(2,5)} is a relation from {1,2,3} to {4,5,6}
+      and not a relation from {1,2} to {4,5}?
+    - What is the function of the identity relation?
+    - Why are the functions curry and uncurry fundamental for functional
+      programming?
+    - Again coming up with proof in general
+    - 5.63,5.64,6.65 is not clear for me
+    - Partitions. And especially such notation used at 5.83
+
+    -- Page 200
+    -- Example 5.63 The relation ∼ between vectors in 3-dimensional space R 3 that is
+    -- defined by~ a ∼ ~ b ≡ ∃r ∈ R + (~ a = r ~ b) is an equivalence.
+    --
+    -- What does the ∼ symbol mean between the two vectors? Never seen it before in this book
+
+    -- Page 213
+    -- Integer Partitions
+    -- I cannot figure out for what kind of problems integer partitions can be usefull (ignoring the cash change examples)
+
+    -- Page 204
+    -- Equivalence classes
+    -- I dont see why this needs to be a new class.
 
 ------------------------------------------------------------------------------}
 
