@@ -13,7 +13,7 @@ import SetOrd
   Answer:
 
     - The Russel Paradox is not entirely clear to me.
-    -
+    - The halts function is not very clear to me.
 
 ------------------------------------------------------------------------------}
 
@@ -187,11 +187,6 @@ trClos (x:xs) = nub $ (tr [x] xs) ++ trClos xs
 
   Hours spent: 1
   Answer:
-    -   For the symClose. The property that must be checked is whether for every pair (x,y) there is a pair
-        (y,x) in the set
-    -   For trClose. The property that must be checked is whether for every pair (x,y) and a pair (y,z) in the
-        the set there is also a (x,z) in the set.
-    -   For both the original set MUST be a subset of the newly created set (we can use subSet for this)
 
 ------------------------------------------------------------------------------}
 
