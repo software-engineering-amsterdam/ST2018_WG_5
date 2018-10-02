@@ -232,7 +232,26 @@ prop_trClos setA = isSubSet setA setB && isTransitiveSet setB
   waarschijnlijk super simpel maar het is laat en ik moet nu echt slapen
 ------------------------------------------------------------------------------}
 
+-- NEW: based on dennis assignment 7, WIP ATM
+
+newtype RelInt = RelInt (Rel Int)
+    deriving (Eq, Show)
+
+instance Arbitrary RelInt where
+    arbitrary = do
+        Positive x <- arbitrary
+        Positive y <- arbitrary
+        return $ (RelInt [(x,y)])
+
+--prop_counterExample :: RelInt -> Bool
+--prop_counterExample (xs ) = False
+--prop_counterExample xs = (trClos (symClos xs)) == (symClos (trClos xs))
+
+
+-- OLD
+-- IGNORE ME
 -- Generates listed tuples in the form of [(x,y)] as [(22,34)]
+
 testCases  :: IO (Rel Int)
 testCases = do
     x <- randomInt
@@ -245,14 +264,3 @@ testfin = do
     let symTransRelA = symClos (trClos relA)
     print relA
     print $ transSymRelA == symTransRelA
-
--- FIXME?
--- wanna use testCases in my prop
-prop_counterExample :: Ord a => Rel a -> Bool
---prop_counterExample (xs ) = False
-prop_counterExample xs = (trClos (symClos xs)) == (symClos (trClos xs))
---prop_counterExample = (trClos (symClos testCases)) == (symClos (trClos testCases))
-
---qctest = quickCheck prop_counterExample
-
---qctest2 = quickCheck (\ (Positive a) (Positive b) -> trClos [(a,a)] == trClos [(a,a)])
