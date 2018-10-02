@@ -1,0 +1,8 @@
+1: All
+2: Michael or Ewoud
+3: Thomas
+4: All
+5: Dennis or Michael
+6: Dennis did not use Union, but Ewoud's solution is more readable
+7: Michael
+8: Michael
