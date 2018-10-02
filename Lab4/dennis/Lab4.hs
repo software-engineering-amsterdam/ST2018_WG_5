@@ -128,9 +128,10 @@ ass3 = do
 
   Assignment 4
 
-  Hours spent:
+  Hours spent: 2
   Answer:
-    - TODO
+
+    -
 
 ------------------------------------------------------------------------------}
 
@@ -185,7 +186,7 @@ trClos (x:xs) = nub $ (tr [x] xs) ++ trClos xs
 
   Assignment 7
 
-  Hours spent: 1
+  Hours spent: 2
   Answer:
 
 ------------------------------------------------------------------------------}
@@ -210,19 +211,8 @@ prop_ContainsSymClose (RelInt r) = all (\(x,y) -> (y,x) `elem` (symClos r)) r
 
   Assignment 8
 
-  Hours spent: 0.25
+  Hours spent:
   Answer:
-    This is not true, the order of applying the 2 operations DOES matter. The main point why it does is
-    that transitivity is also true whenever 2 pairs have nothing to do with each other. When symmetry is
-    added first this causes the situation to change completely.
-    Example:
-    sym -> trans
-    {(1,3),(2,4)} -> {(1,3),(3,1),(2,4),(4,2)} -> {(1,3),(3,1),(2,4),(4,2),(1,1),(3,3),(2,2),(4,4)}
-
-    trans -> sym
-    {(1,3),(2,4)} -> {(1,3),(2,4)} -> {(1,3),(3,1),(2,4),(4,2)}
-
-    As you can see the result is different when the order of applying the operations is swapped.
-
+    -
 ------------------------------------------------------------------------------}
 
