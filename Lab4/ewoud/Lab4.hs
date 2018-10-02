@@ -248,5 +248,11 @@ testfin = do
 
 -- FIXME?
 -- wanna use testCases in my prop
---prop_counterExample :: Bool
+prop_counterExample :: Ord a => Rel a -> Bool
+--prop_counterExample (xs ) = False
+prop_counterExample xs = (trClos (symClos xs)) == (symClos (trClos xs))
 --prop_counterExample = (trClos (symClos testCases)) == (symClos (trClos testCases))
+
+--qctest = quickCheck prop_counterExample
+
+--qctest2 = quickCheck (\ (Positive a) (Positive b) -> trClos [(a,a)] == trClos [(a,a)])
