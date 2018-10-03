@@ -360,3 +360,17 @@ quickCheckTransitivity = quickCheck testTransitive
     As you can see the result is different when the order of applying the operations is swapped.
 
 ------------------------------------------------------------------------------}
+
+newtype RelInt = RelInt (Rel Int)
+    deriving (Eq, Show)
+
+instance Arbitrary RelInt where
+    arbitrary = do
+        Positive x <- arbitrary
+        Positive y <- arbitrary
+        return $ (RelInt [(x,y)])
+
+prop_counterExample :: RelInt -> Bool
+prop_counterExample (RelInt xs) = (trClos (symClos xs)) == (symClos (trClos xs))
+
+assignment8 = quickCheck prop_counterExample

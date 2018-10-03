@@ -227,13 +227,10 @@ prop_trClos setA = isSubSet setA setB && isTransitiveSet setB
 
   Assignment 8
 
-  Hours spent: 
-  TODO: FIX Couldn't match type ‘IO (Rel Int)’ with ‘[(a0, a0)]’
-  waarschijnlijk super simpel maar het is laat en ik moet nu echt slapen
+  Hours spent: 1
 ------------------------------------------------------------------------------}
 
--- NEW: based on dennis assignment 7, WIP ATM
-
+-- Generator created by Dennis.
 newtype RelInt = RelInt (Rel Int)
     deriving (Eq, Show)
 
@@ -243,24 +240,7 @@ instance Arbitrary RelInt where
         Positive y <- arbitrary
         return $ (RelInt [(x,y)])
 
---prop_counterExample :: RelInt -> Bool
---prop_counterExample (xs ) = False
---prop_counterExample xs = (trClos (symClos xs)) == (symClos (trClos xs))
+prop_counterExample :: RelInt -> Bool
+prop_counterExample (RelInt xs) = (trClos (symClos xs)) == (symClos (trClos xs))
 
-
--- OLD
--- IGNORE ME
--- Generates listed tuples in the form of [(x,y)] as [(22,34)]
-
-testCases  :: IO (Rel Int)
-testCases = do
-    x <- randomInt
-    y <- randomInt  
-    return ([(x, y)])
-
-testfin = do
-    relA <- testCases
-    let transSymRelA = trClos (symClos relA)
-    let symTransRelA = symClos (trClos relA)
-    print relA
-    print $ transSymRelA == symTransRelA
+assignment8 = quickCheck prop_counterExample
