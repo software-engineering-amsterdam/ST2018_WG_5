@@ -384,6 +384,10 @@ genRandomSudoku :: IO Node
 genRandomSudoku = do [r] <- rsolveNs [emptyN]
                      return r
 
+genRandomSudoku' :: Constrnt ->  IO Node
+genRandomSudoku' constrnt = do [r] <- rsolveNs' [emptyN] constrnt
+                               return r
+
 randomS = genRandomSudoku >>= showNode
 
 uniqueSol :: Node -> Bool
@@ -391,7 +395,12 @@ uniqueSol node = singleton (solveNs [node]) where
   singleton [] = False
   singleton [x] = True
   singleton (x:y:zs) = False
---TODO stopped here with tracing back refactoring
+
+uniqueSol' :: Node -> Constrnt -> Bool
+uniqueSol' node constrnt = singleton (solveNs' [node] constrnt) where
+  singleton [] = False
+  singleton [x] = True
+  singleton (x:y:zs) = False
 
 eraseS :: Sudoku -> (Row,Column) -> Sudoku
 eraseS s (r,c) (x,y) | (r,c) == (x,y) = 0
@@ -413,8 +422,8 @@ minimalize n ((r,c):rcs) | uniqueSol n' = minimalize n' rcs
 
 minimalize' :: Node -> [(Row,Column)] -> Constrnt -> Node
 minimalize' n [] _ = n
-minimalize' n ((r,c):rcs) constrnt | uniqueSol n' = minimalize' n' rcs constrnt
-                                   | otherwise    = minimalize' n  rcs constrnt
+minimalize' n ((r,c):rcs) constrnt | uniqueSol' n' constrnt = minimalize' n' rcs constrnt
+                                   | otherwise              = minimalize' n  rcs constrnt
   where n' = eraseN' n (r,c) constrnt
 
 filledPositions :: Sudoku -> [(Row,Column)]
