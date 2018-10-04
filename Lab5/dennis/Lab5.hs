@@ -3,17 +3,16 @@ module Lab5 where
 import Data.List
 import System.Random
 --import Lecture5
-import Lecture5
-import Debug.Trace
+--import Lecture5Ass1
+import Lecture5Ass2
+import Control.Applicative
+
 
 {------------------------------------------------------------------------------
 
     Assignment 1
 
-    Hours spent: 1h
-
-    Answer:
-
+    Hours spent: 1.5
 
 ------------------------------------------------------------------------------}
 -- Sudoku from assignment1
@@ -28,7 +27,7 @@ sudoku1  = [[0,0,0,3,0,0,0,0,0],
             [0,8,0,0,4,0,0,0,0],
             [0,0,2,0,0,0,0,0,0]]
 
--- CODE IS IN Lecture5.hs
+-- CODE IS IN Lecture5Ass1.hs
 
 -- solveAndShow sudoku1
 --  +-------+-------+-------+
@@ -50,57 +49,96 @@ sudoku1  = [[0,0,0,3,0,0,0,0,0],
 
     Assignment 2
 
-    Hours spent: xh
+    Hours spent: 0.75
 
-    State:
-    Added the refactors from the assignment.
-    Works by changing import Lecture5 to import Lecture5Refactor
+    CODE IN Lecture5Ass2.hs
 
-    Todo:
-    - Check for further improvements
-    - Test improvement (benchmark?)
-    - Add NRC changes from Assignment1
+    - The refactored code is easier to modify for NRC sudokus due to the easier implementation of extra constraints.
+    - Test for efficiency:
+
+    > time ./test_non_rf
+    real    0m0,263s
+    user    0m0,256s
+    sys     0m0,006s
+    > time ./test_rf
+    real    0m0,262s
+    user    0m0,250s
+    sys     0m0,013s
 
 ------------------------------------------------------------------------------}
-
--- Check Lecture5Refactor.hs
 
 {------------------------------------------------------------------------------
 
   Assignment 3
 
-  Hours spent: xh
+  Hours spent: 1
 
 ------------------------------------------------------------------------------}
--- Code from Lecture5 code:
---
--- uniqueSol 
--- eraseN
--- minimalize
 
--- IDEA:
--- find unique sodokuA  (uniqueSol)
---      remove node 1 (the "hint"?) from unique sodokuA
---      check if sodokuA - node 1 is not unique
---      repeat for all node n
+checkIfMinimal :: Node -> Bool
+checkIfMinimal n = all (\x -> removePosAndCheckUnique n x == False) (filledPositions (node2sud n))
 
--- wiki defi:
--- (Sudokus in which no clue can be deleted without losing uniqueness of the solution) 
+removePosAndCheckUnique :: Node -> (Row, Column) -> Bool
+removePosAndCheckUnique node pos = uniqueSol (eraseN node pos)
 
--- CONFUSION
--- Only need to check P minus 1 hint. So first remove hint 1, then put back hint 1 and remove hint 2 and so on??
+node2sud :: Node -> Sudoku
+node2sud (s, _) = s
+
+ass3 = do
+    x <- genRandomSudoku
+    y <- genProblem x
+    print $ uniqueSol y
+    print $ checkIfMinimal y
+
+--  *Lab5> ass3
+--  True
+--  True
+
 {------------------------------------------------------------------------------
 
   Assignment 4
 
-  Hours spent: xh
+  Hours spent: 1
 
 ------------------------------------------------------------------------------}
+
+--emptyBlock :: Sudoku ->
+getBlockPositions :: [Int] -> [Int] -> [(Int, Int)]
+getBlockPositions xs ys = (,) <$> ys <*> xs
+
+eraseNodes :: Node -> [(Row, Column)] -> Node
+eraseNodes n [] = n
+eraseNodes n (xy:xs) = eraseNodes (eraseN n xy) xs
+
+emptyBlock :: [Int] -> [Int] -> Node -> Node
+emptyBlock xs ys n = eraseNodes n (getBlockPositions xs ys)
+
+solveNode :: Node -> IO[()]
+solveNode n = solveAndShow $ sud2grid $ node2sud n
+
+ass4 = do
+    -- Generate a sudoku problem with 3 empty blocks
+    x1 <- genRandomSudoku
+    y1 <- genProblem $ emptyBlock [1..3] [1..3] $ emptyBlock [4..6] [1..3] $ emptyBlock [7..9] [1..3] x1
+    showNode y1
+--    solveNode y1
+    print "------------------------------------"
+    -- Generate a sudoku problem with 4 empty blocks
+    x2 <- genRandomSudoku
+    y2 <- genProblem $ emptyBlock [1..3] [1..3] $ emptyBlock [4..6] [1..3] $ emptyBlock [7..9] [1..3] $ emptyBlock [1..3] [4..6] x2
+    showNode y2
+--    solveNode y2
+    print "------------------------------------"
+    -- Generate a sudoku problem with 5 empty blocks
+    x3 <- genRandomSudoku
+    y3 <- genProblem $ emptyBlock [1..3] [1..3] $ emptyBlock [4..6] [1..3] $ emptyBlock [7..9] [1..3] $ emptyBlock [1..3] [4..6]  $ emptyBlock [4..6] [4..6] x3
+    showNode y3
+--    solveNode y3
 
 {------------------------------------------------------------------------------
 
   Assignment 5
 
-  Hours spent: xh
+  Hours spent:
 
 ------------------------------------------------------------------------------}
