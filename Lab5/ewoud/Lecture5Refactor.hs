@@ -53,7 +53,7 @@ prune _ _ [] = []
 prune (r,c,v) cns ((x,y,zs):rest)
   | (x,y) `elem` checkCons = (x,y,zs\\[v]) : prune (r,c,v) cns rest
   | otherwise = (x,y,zs) : prune (r,c,v) cns rest
-  where checkCons = nub $ join $ filter (\x -> (r,c) `elem` x) nrcGridConstr  
+  where checkCons = nub $ join $ filter (\x -> (r,c) `elem` x) cns 
 
 consistent :: Sudoku -> Constrnt -> Bool
 consistent s cns = all (\p -> p == nub p) [filter (/= 0) [s (r,c) | (r,c) <- cs] | cs <- cns]
