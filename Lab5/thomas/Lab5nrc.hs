@@ -1,4 +1,4 @@
-module Lab5 where
+module Lab5nrc where
 import Data.List
 import System.Random
 import Debug.Trace
@@ -66,9 +66,19 @@ showSudoku = showGrid . sud2grid
 bl :: Int -> [Int]
 bl x = concat $ filter (elem x) blocks 
 
+nrcBlocks :: [[Int]]
+nrcBlocks = [[2..4],[6..8]]
+
+nrcBl :: Int -> [Int]
+nrcBl x = concat $ filter (elem x) nrcBlocks
+
 subGrid :: Sudoku -> (Row,Column) -> [Value]
 subGrid s (r,c) = 
   [ s (r',c') | r' <- bl r, c' <- bl c ]
+
+nrcSubGrid :: Sudoku -> (Row,Column) -> [Value]
+nrcSubGrid s (r,c) = 
+  [ s (r',c') | r' <- nrcBl r, c' <- nrcBl c ]
 
 freeInSeq :: [Value] -> [Value]
 freeInSeq seq = values \\ seq 
@@ -105,6 +115,10 @@ subgridInjective :: Sudoku -> (Row,Column) -> Bool
 subgridInjective s (r,c) = injective vs where 
    vs = filter (/= 0) (subGrid s (r,c))
 
+nrcSubgridInjective :: Sudoku -> (Row,Column) -> Bool
+nrcSubgridInjective s (r,c) = injective vs where 
+   vs = filter (/= 0) (nrcSubGrid s (r,c))
+
 consistent :: Sudoku -> Bool
 consistent s = and $
                [ rowInjective s r |  r <- positions ]
@@ -113,6 +127,9 @@ consistent s = and $
                 ++
                [ subgridInjective s (r,c) | 
                     r <- [1,4,7], c <- [1,4,7]]
+                ++
+               [ nrcSubgridInjective s (r, c) | 
+                    r <- [2,6], c <- [2,6]]
 
 extend :: Sudoku -> ((Row,Column),Value) -> Sudoku
 extend = update
@@ -144,10 +161,15 @@ prune (r,c,v) ((x,y,zs):rest)
   | c == y = (x,y,zs\\[v]) : prune (r,c,v) rest
   | sameblock (r,c) (x,y) = 
         (x,y,zs\\[v]) : prune (r,c,v) rest
+  | sameNrcBlock (r,c) (x,y) =
+        (x,y,zs\\[v]) : prune (r,c,v) rest
   | otherwise = (x,y,zs) : prune (r,c,v) rest
 
 sameblock :: (Row,Column) -> (Row,Column) -> Bool
 sameblock (r,c) (x,y) = bl r == bl x && bl c == bl y
+
+sameNrcBlock :: (Row,Column) -> (Row,Column) -> Bool
+sameNrcBlock (r,c) (x,y) = nrcBl r == nrcBl x && nrcBl c == nrcBl y
 
 initNode :: Grid -> [Node]
 initNode gr = let s = grid2sud gr in 
@@ -346,3 +368,9 @@ genProblem :: Node -> IO Node
 genProblem n = do ys <- randomize xs
                   return (minimalize n ys)
    where xs = filledPositions (fst n)
+
+-- main :: IO ()
+-- main = do [r] <- rsolveNs [emptyN]
+--           showNode r
+--           s  <- genProblem r
+--           showNode s
