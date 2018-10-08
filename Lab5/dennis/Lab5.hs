@@ -2,8 +2,8 @@ module Lab5 where
 
 import Data.List
 import System.Random
---import Lecture5
-import Lecture5Ass1
+import Lecture5
+--import Lecture5Ass1
 --import Lecture5Ass2
 import Control.Applicative
 
