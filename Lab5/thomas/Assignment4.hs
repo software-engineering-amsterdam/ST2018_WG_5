@@ -26,6 +26,7 @@ keepGenerating num = do z <- generateEmptyBlockSudoku num
 
 -- Assignment 4
 -- Hours: 1.5
+-- Answers: Generating for four empty blocks still works, five empty blocks does not
 
 assignment4 :: Int -> IO ()
 assignment4 num = do z <- keepGenerating num

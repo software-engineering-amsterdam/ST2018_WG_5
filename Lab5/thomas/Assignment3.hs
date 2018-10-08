@@ -17,6 +17,9 @@ isMinimal n = uniqueSol n && recursePositions (filledPositionsN n) n
 
 -- Assignment 3
 -- Hours: 1.5
+-- Answers: One could test if the generated solutions are minimal by checking if
+-- there is a unique solution for the sudoku and if any of the hints is erased there
+-- should not be a unique solution anymore.
 
 assignment3 :: IO ()
 assignment3 = do r <- genRandomSudoku
