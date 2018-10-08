@@ -1,0 +1,24 @@
+Vote niet opmezelf.
+
+Votes:
+1: Michael
+2: ?
+3: Thomas
+4: Dennis
+5: Michael
+
+Comments:
+1: His solution contains documentation what he has done and why.
+2: Misschien dat ik het niet helemaal begrepen heb (ik was niet bij dat college, shame on me) maar volgens 
+mij kloppen de refactors niet.
+AFAIK is het de bedoeling dat je dmv Position + Constrnt het hele puzzel gedeelte afbstract/functioneel maakt.
+Dus ipv met x,y pos coordinates werk je met [coordinates], dus dat je maar 1 definitie hoeft aan te passen om een 5d
+sudoku te generen. Overal staat nu nog (Row,Column) ipv Position.
+
+En hetzelfde geld voor de rule set,  dus dat je maar op 1 regel een ruleset hoeft te defineren.
+
+En volgens mij mist het "freeAtPos' is not complete etc" gedeelte van de anouncements van canvas.
+
+3:
+4:  (,) <$> ys <*> xs ziet er heel haskelly uit.
+5: 
