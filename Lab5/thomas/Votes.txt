@@ -1,5 +1,5 @@
-Assigment1: 
-Assigment2: 
-Assigment3: 
-Assigment4: 
-Assigment5: 
+Assigment1: Ewoud
+Assigment2: Michael or Dennis
+Assigment3: Michael
+Assigment4: Dennis
+Assigment5: Michael
