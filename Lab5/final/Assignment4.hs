@@ -2,50 +2,58 @@ module Assignment4 where
 
 import Data.List
 import System.Random
-import Lecture5
-
-import Control.Applicative
+import Lecture5Assignment4
 
 {------------------------------------------------------------------------------
 
   Assignment 4
 
-  Hours spent: 3
-  Answer:
-
+  Hours spent: 2
 ------------------------------------------------------------------------------}
 
-node2sud :: Node -> Sudoku
-node2sud (s, _) = s
-
-getBlockPositions :: [Int] -> [Int] -> [(Int, Int)]
-getBlockPositions xs ys = (,) <$> ys <*> xs
-
-eraseNodes :: Node -> [(Row, Column)] -> Node
+-- recursive call to eraseN
+eraseNodes :: Node -> [(Row,Column)] -> Node
 eraseNodes n [] = n
-eraseNodes n (xy:xs) = eraseNodes (eraseN n xy) xs
+eraseNodes n ((r,c):xs) = eraseNodes (eraseN n (r,c)) xs
 
-emptyBlock :: [Int] -> [Int] -> Node -> Node
-emptyBlock xs ys n = eraseNodes n (getBlockPositions xs ys)
+-- Erase block i from Node
+eraseBlock :: Node -> Int -> Node
+eraseBlock n i = eraseNodes n [(r, c) | r <- blocks !! (i `quot` 3), c <- blocks !! (i `mod` 3)]
 
-solveNode :: Node -> IO[()]
-solveNode n = solveAndShow . sud2grid $ node2sud n
+-- Erase X blocks from Node
+setEmptyBlock :: Node -> [Int] -> Node
+setEmptyBlock n [] = n
+setEmptyBlock n (x:xs) = setEmptyBlock (eraseBlock n x) xs
 
-assignment4 = do
-    -- Generate a sudoku problem with 3 empty blocks
-    x1 <- genRandomSudoku
-    y1 <- genProblem . emptyBlock [1..3] [1..3] $ emptyBlock [4..6] [1..3] $ emptyBlock [7..9] [1..3] x1
-    showNode y1
---    solveNode y1
-    print "------------------------------------"
-    -- Generate a sudoku problem with 4 empty blocks
-    x2 <- genRandomSudoku
-    y2 <- genProblem . emptyBlock [1..3] [1..3] $ emptyBlock [4..6] [1..3] $ emptyBlock [7..9] [1..3] $ emptyBlock [1..3] [4..6] x2
-    showNode y2
---    solveNode y2
-    print "------------------------------------"
-    -- Generate a sudoku problem with 5 empty blocks
-    x3 <- genRandomSudoku
-    y3 <- genProblem . emptyBlock [1..3] [1..3] $ emptyBlock [4..6] [1..3] $ emptyBlock [7..9] [1..3] $ emptyBlock [1..3] [4..6]  $ emptyBlock [4..6] [4..6] x3
-    showNode y3
---    solveNode y3
+genEmptyBlock :: Int -> IO Node
+genEmptyBlock n = do
+    ys <- genRandomSudoku
+    b <- randsf n [] :: IO [Int] 
+    let cs = setEmptyBlock ys b
+    return cs
+
+prop_emptyN :: Int -> Int -> Int -> IO()
+prop_emptyN empty 0 n = putStrLn $ "Found " ++ show n ++ " possible sudokus with " ++ show empty ++ " empty blocks" 
+prop_emptyN empty tests n = do
+    sudoku <- genEmptyBlock empty
+    if (uniqueSol sudoku)
+        then prop_emptyN empty (tests - 1) (n + 1)
+        else prop_emptyN empty (tests - 1) (n)
+
+
+randsf :: (Eq a, Num a, Random a) => Int -> [a] -> IO [a]
+randsf n rs
+    | length rs == n = return rs -- 3 SHOULD BE n
+    | otherwise = do
+        r <- randomRIO (0,8)
+        if elem r rs 
+            then randsf n rs 
+            else randsf n (r:rs)
+
+-- prop_emptyN (empty blocks) (test attempts) (init value for tracking)
+check3 = prop_emptyN 3 1000 0
+-- Found 238 possible sudokus with 3 empty blocks
+check4 = prop_emptyN 4 1000 0
+-- Found 8 possible sudokus with 3 empty blocks
+check5 = prop_emptyN 5 1000 0
+-- Found 0 possible sudokus with 3 empty blocks
