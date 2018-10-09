@@ -57,3 +57,4 @@ check4 = prop_emptyN 4 1000 0
 -- Found 8 possible sudokus with 3 empty blocks
 check5 = prop_emptyN 5 1000 0
 -- Found 0 possible sudokus with 3 empty blocks
+-- 5 empty blocks with a unique solution is not possible
