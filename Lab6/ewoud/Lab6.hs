@@ -6,6 +6,9 @@ import Numeric
 import Data.Bits
 -- 
 import Lecture6 (prime, primeTestsF, primeMR, primes)
+-- Bonus assignment imports
+import Lecture6 (rsaPublic, rsaPrivate, rsaEncode, rsaDecode)
+import Data.Hashable
 
 
 {------------------------------------------------------------------------------
@@ -277,3 +280,48 @@ ass6b = do
     -- primeMR 10 mp
     m10 <- avgDiscoverMersenneN 0 0 bench 10 primes upTo 0 0 
     print ("Avg of " ++ show bench ++ " runs with: primeMR 10 x and " ++ show upTo ++ " mersenne primes: " ++ (show (fst m10)) ++ "% of the lists contained only correct values and " ++ (show (snd m10)) ++ "% orderd by small to large")
+
+
+{------------------------------------------------------------------------------
+
+Assignment 7
+
+Hours spent: 1h
+
+State: working. Todo: add better bitlength check + message serialization?
+------------------------------------------------------------------------------}
+genNBitPrime :: Int -> IO (Integer)
+genNBitPrime n = do
+    -- stay in range
+    p <- randomRIO((2 ^ (n - 1)) + 1, (2 ^ n) - 1)
+    isPrime <- primeMR 10 p
+    if isPrime 
+        then return p
+        else genNBitPrime n
+
+rsaPrimePair :: Int -> IO (Integer, Integer)
+rsaPrimePair n = do
+    p <- genNBitPrime n
+    q <- genNBitPrime n
+    -- bit length check?
+    --
+    -- check iff unique
+    if (p /= q)
+        then return (p, q)
+        else rsaPrimePair n
+
+ass7 = do
+    let nbits = 128
+    -- Find 2 random and distinct prime numbers p and q.
+    pq <- rsaPrimePair nbits
+    let publicKey = rsaPublic (fst pq) (snd pq)
+    let privateKey = rsaPrivate (fst pq) (snd pq)
+    -- message
+    -- 
+    -- perhaps add hash/seriliaztion to bypass Integer limitation
+    let msg = 123456789
+    print ("Original message: " ++ show msg)
+    let msgEncode = rsaEncode publicKey msg
+    print ("Encoded message: " ++ show msgEncode)
+    let msgDecode = rsaDecode privateKey msgEncode
+    print ("Decoded message: " ++ show msgDecode)
