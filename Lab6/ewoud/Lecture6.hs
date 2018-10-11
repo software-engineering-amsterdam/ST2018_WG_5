@@ -1,12 +1,10 @@
---
--- Source: ripped from michael (couldn't find it on canvas?)
---
 
 module Lecture6
 
 where 
 
 import System.Random
+import Data.Bits
 
 factorsNaive :: Integer -> [Integer]
 factorsNaive n0 = factors' n0 2 where 
@@ -113,12 +111,15 @@ coprimes = filter (uncurry coprime) pairs
 expM ::  Integer -> Integer -> Integer -> Integer
 expM x y = rem (x^y)
 
+-- Modified version (Exercise 1)
+-- Exm:: base(b) -> exponent(e) -> modulus(m) -> result
 exM :: Integer -> Integer -> Integer -> Integer
-exM _ 0 _ = 1
-exM x y p = if even y then current else (x * current) `mod` p
-                where
-                    current = (remaining * remaining) `mod` p
-                    remaining = exM x (y `div` 2) p
+exM b 0 m = 1
+exM b e m = mult * exM ((b * b) `mod` m) (shiftR e 1) m `mod` m where
+    -- if bit value [,,x,,] is 0, do not modify result
+    -- otherwise set result
+    mult    | testBit e 0 = b `mod` m
+            | otherwise = 1
 
 primeTestF :: Integer -> IO Bool
 primeTestF n = do 
@@ -151,7 +152,7 @@ primeMR k n = do
     then return False else primeMR (k-1) n
 
 composites :: [Integer]
-composites = filter (\x -> not (prime x)) [2..]
+composites = error "not yet implemented"
 
 encodeDH :: Integer -> Integer -> Integer -> Integer
 encodeDH p k m = m*k `mod` p
