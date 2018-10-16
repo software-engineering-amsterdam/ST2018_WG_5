@@ -1,0 +1,6 @@
+1: I prefer the non bit shift solutions for the sake of readability (although they are quite concise)
+2: Ewoud
+3: Any solution using filter. Michael’s solution does include some output though
+4: Thomas or Michael, due to simplicity + output (Dennis has no output, but logic itself is also okay)
+5: Thomas or Michael, due to simplicity + output (Dennis has no output, but logic itself is also okay)
+6: Ewoud is most elaborate
