@@ -1,0 +1,27 @@
+vote niet opmezelf (ewoud)
+Votes:
+1: Michael/thomas (sorry dennis, ziet er leuk uit maarja ;o)
+2: Michael
+3: Thomas
+4: Dennis
+5: Michael
+6: Michael
+
+Comments:
+1: 
+Mischien uitleg erbij hoe de logica werkt (mist bij allemaal).
+2:
+In de benchmark moet volgens mij naar voren komen dat de nieuwe oplossing 
+complexiteit x^y in polynomial time heeft.
+Nu staat er gewoon een standaard runtime dingetje maar dat zegt niks.
+3:
+4: 
+Volgens mij is het probleem dat je uitkomst meer willekeurig is met een kleine k.
+Dan moet je de test toch x keer doen per k zodat je een beeld kan schetsen ipv op 
+goed geluk een waarde trekken?
+5:
+Zelfde verhaal als 4 volgens mij
+6:
+Kon alleen michaels versie vinden.
+Maar volgens mij is de uitkomst dat de Miller-Rabin primality check nauwkeuriger is door de extra check
+want Rabin-miller extends  Fermat's primality check met een extra condition.
