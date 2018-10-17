@@ -11,8 +11,8 @@ import Assignment3
   As k increases the found composites are larger.
   
   This is because for a sample of k possible fermat witnesses the possibility
-  of all of them beign fermat liars is LEQ 2^-k probability. 
-  Give a large enough k this probability aproximates zero. 
+  of all of them being fermat liars is LEQ 2^-k probability.
+  Give a large enough k this probability approximates zero.
 ------------------------------------------------------------------------------}
 
 testFermat k (x:xs) = do

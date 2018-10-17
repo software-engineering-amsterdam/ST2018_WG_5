@@ -12,7 +12,7 @@ import Assignment4
     of carmichael's composite numbers.
 
     This is easy to explain since this list of carmichael is the exact counter for the Fermat theorem.
-    On Wikipedia they call it the Fermat pseudoprimes for this reason. This means that every number in the list
+    On Wikipedia they call it the Fermat pseudo-primes for this reason. This means that every number in the list
     is set to fool the Fermat theorem and thus is the first in this list always the first counterexample.
 
 ------------------------------------------------------------------------------}

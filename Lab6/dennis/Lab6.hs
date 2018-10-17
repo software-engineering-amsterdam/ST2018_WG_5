@@ -31,7 +31,7 @@ exM b e m = t * exM ((b * b) `mod` m) (shiftR e 1) m `mod` m where t = if testBi
 --sys     0m0,004s
 
 -- time ./testNormal
--- doesn't finish within a minute
+-- Doesn't finish within a minute
 
 {------------------------------------------------------------------------------
 
@@ -68,7 +68,7 @@ ass4 = do
 
   Assignment 5
 
-  Hours spent:
+  Hours spent: 0.5
   Answer:
 ------------------------------------------------------------------------------}
 
@@ -90,12 +90,21 @@ ass5 = do
 
   Assignment 6 1
 
-  Hours spent:
+  Hours spent: 0.5
   Answer:
+  These tests do not finish within 5 minutes.
 ------------------------------------------------------------------------------}
 
+testMillerRubin k (x:xs) = do
+   failureFound <- primeMR k x
+   if failureFound then print $ x else testMillerRubin k xs
 
-
+ass61 = do
+      testMillerRubin 1 carmichael
+      testMillerRubin 2 carmichael
+      testMillerRubin 3 carmichael
+      testMillerRubin 4 carmichael
+      testMillerRubin 5 carmichael
 
 {------------------------------------------------------------------------------
 
@@ -103,4 +112,7 @@ ass5 = do
 
   Hours spent:
   Answer:
+
 ------------------------------------------------------------------------------}
+
+

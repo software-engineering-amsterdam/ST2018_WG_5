@@ -18,7 +18,7 @@ Output:
 "Decoded message: 123456789"
 ------------------------------------------------------------------------------}
 
--- Returns a prima value in the range
+-- Returns a prime value in the range
 -- between 2^(n-1) and 2^(n)
 genNBitPrime :: Int -> IO (Integer)
 genNBitPrime n = do
