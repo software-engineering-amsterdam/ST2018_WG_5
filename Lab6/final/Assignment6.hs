@@ -12,7 +12,18 @@ Assignment 6_1
 
 Hours spent: 0.5h
 
-Using the miller rabin check instead of Fermat's primality rerunning exercise 5 gives
+Using the Fermat's primality check on the Carmichael numbers gives the following testing
+results:
+
+"k = 1, first 15 Carmichael numbers, avg of 500 tests. Percentage of false positives : 99.43995"
+"k = 2, first 15 Carmichael numbers, avg of 500 tests. Percentage of false positives : 98.639885"
+"k = 3, first 15 Carmichael numbers, avg of 500 tests. Percentage of false positives : 98.27986"
+"k = 5, first 15 Carmichael numbers, avg of 500 tests. Percentage of false positives : 96.94645"
+"k = 10, first 15 Carmichael numbers, avg of 500 tests. Percentage of false positives : 94.413086"
+"k = 100, first 15 Carmichael numbers, avg of 500 tests. Percentage of false positives : 69.08004"
+
+
+Using the miller rabin check instead of Fermat's primality we get the following results
 the following results:
 
 "k = 1, first 500 Carmichael numbers, avg of 10 tests. Percentage of false positives : 10.4"
